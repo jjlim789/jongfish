@@ -5,11 +5,39 @@
 #include <sstream>
 #include <algorithm>
 #include <utility>
+#include <limits>
+#include <ctime>
+#include <fstream>
+#include <iomanip>
 
 using namespace std;
 
 enum PieceType { EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 enum Color { NONE, WHITE, BLACK };
+
+// Forward declaration
+class ChessBoard;
+
+// Structure to represent a chess move
+struct ChessMove {
+    int fromRow, fromCol, toRow, toCol;
+    PieceType promotionPiece;
+    
+    ChessMove() : fromRow(-1), fromCol(-1), toRow(-1), toCol(-1), promotionPiece(EMPTY) {}
+    ChessMove(int fr, int fc, int tr, int tc, PieceType promo = EMPTY) 
+        : fromRow(fr), fromCol(fc), toRow(tr), toCol(tc), promotionPiece(promo) {}
+    
+    string toAlgebraic() const;
+    bool isValid() const { return fromRow >= 0 && fromRow < 8 && toRow >= 0 && toRow < 8; }
+};
+
+// Abstract AI interface
+class ChessAI {
+public:
+    virtual ~ChessAI() {}
+    virtual ChessMove getBestMove(const ChessBoard& board, Color color) = 0;
+    virtual string getName() const = 0;
+};
 
 struct Piece {
     PieceType type;
@@ -864,63 +892,1107 @@ public:
     Color getCurrentTurn() const {
         return currentTurn;
     }
+    
+    // AI-related methods
+    vector<ChessMove> generateLegalMoves(Color color) const;
+    string convertPositionToFEN() const;
+    double evaluatePosition(Color perspective) const;  // material_heuristic
+    double heuristic(Color perspective) const;  // User-implementable heuristic
+    
+    // Apply and undo moves (for AI search)
+    bool applyMove(const ChessMove& move);
+    void undoLastMove();
+    
+    // Get piece at position (for AI evaluation)
+    Piece getPieceAt(int row, int col) const {
+        if (row < 0 || row > 7 || col < 0 || col > 7) return Piece();
+        return board[row][col];
+    }
+    
+    // PGN export
+    string exportPGN(const string& whitePlayer, const string& blackPlayer, const string& result) const;
+};
+
+// Implementation of ChessMove::toAlgebraic()
+string ChessMove::toAlgebraic() const {
+    if (!isValid()) return "invalid";
+    
+    string from = string(1, 'a' + fromCol) + to_string(8 - fromRow);
+    string to = string(1, 'a' + toCol) + to_string(8 - toRow);
+    string result = from + to;
+    
+    if (promotionPiece != EMPTY) {
+        char promoChar = 'q';
+        switch(promotionPiece) {
+            case QUEEN: promoChar = 'q'; break;
+            case ROOK: promoChar = 'r'; break;
+            case BISHOP: promoChar = 'b'; break;
+            case KNIGHT: promoChar = 'n'; break;
+            default: break;
+        }
+        result += promoChar;
+    }
+    
+    return result;
+}
+
+// Generate all legal moves for a given color
+vector<ChessMove> ChessBoard::generateLegalMoves(Color color) const {
+    vector<ChessMove> legalMoves;
+    
+    for (int fromRow = 0; fromRow < 8; fromRow++) {
+        for (int fromCol = 0; fromCol < 8; fromCol++) {
+            if (board[fromRow][fromCol].color != color) continue;
+            if (board[fromRow][fromCol].type == EMPTY) continue;
+            
+            // Try all possible destination squares
+            for (int toRow = 0; toRow < 8; toRow++) {
+                for (int toCol = 0; toCol < 8; toCol++) {
+                    if (isValidMove(fromRow, fromCol, toRow, toCol)) {
+                        // Check for pawn promotion
+                        if (board[fromRow][fromCol].type == PAWN) {
+                            if ((color == WHITE && toRow == 0) || (color == BLACK && toRow == 7)) {
+                                // Add all promotion options
+                                legalMoves.push_back(ChessMove(fromRow, fromCol, toRow, toCol, QUEEN));
+                                legalMoves.push_back(ChessMove(fromRow, fromCol, toRow, toCol, ROOK));
+                                legalMoves.push_back(ChessMove(fromRow, fromCol, toRow, toCol, BISHOP));
+                                legalMoves.push_back(ChessMove(fromRow, fromCol, toRow, toCol, KNIGHT));
+                                continue;
+                            }
+                        }
+                        legalMoves.push_back(ChessMove(fromRow, fromCol, toRow, toCol));
+                    }
+                }
+            }
+        }
+    }
+    
+    return legalMoves;
+}
+
+// Convert current position to FEN notation
+string ChessBoard::convertPositionToFEN() const {
+    string fen = "";
+    
+    // 1. Piece placement
+    for (int row = 0; row < 8; row++) {
+        int emptyCount = 0;
+        for (int col = 0; col < 8; col++) {
+            if (board[row][col].type == EMPTY) {
+                emptyCount++;
+            } else {
+                if (emptyCount > 0) {
+                    fen += to_string(emptyCount);
+                    emptyCount = 0;
+                }
+                fen += board[row][col].getSymbol();
+            }
+        }
+        if (emptyCount > 0) {
+            fen += to_string(emptyCount);
+        }
+        if (row < 7) fen += "/";
+    }
+    
+    // 2. Active color
+    fen += (currentTurn == WHITE) ? " w " : " b ";
+    
+    // 3. Castling availability
+    string castling = "";
+    if (!whiteKingMoved) {
+        if (!whiteRookKingsideMoved) castling += "K";
+        if (!whiteRookQueensideMoved) castling += "Q";
+    }
+    if (!blackKingMoved) {
+        if (!blackRookKingsideMoved) castling += "k";
+        if (!blackRookQueensideMoved) castling += "q";
+    }
+    if (castling.empty()) castling = "-";
+    fen += castling + " ";
+    
+    // 4. En passant target square
+    if (enPassantCol >= 0) {
+        int enPassantRow = (currentTurn == WHITE) ? 5 : 2;  // The square behind the pawn
+        fen += string(1, 'a' + enPassantCol) + to_string(8 - enPassantRow);
+    } else {
+        fen += "-";
+    }
+    
+    // 5. Halfmove clock (not tracked, default to 0)
+    fen += " 0";
+    
+    // 6. Fullmove number (based on history)
+    int fullmove = 1 + moveHistory.size() / 2;
+    fen += " " + to_string(fullmove);
+    
+    return fen;
+}
+
+// Material-based heuristic evaluation
+double ChessBoard::evaluatePosition(Color perspective) const {
+    // Check for checkmate/stalemate first
+    if (isCheckmate(perspective)) {
+        return -numeric_limits<double>::infinity();
+    }
+    
+    Color opponent = (perspective == WHITE) ? BLACK : WHITE;
+    if (isCheckmate(opponent)) {
+        return numeric_limits<double>::infinity();
+    }
+    
+    double score = 0.0;
+    
+    // Material values
+    const double PAWN_VALUE = 1.0;
+    const double KNIGHT_VALUE = 3.0;
+    const double BISHOP_VALUE = 3.0;
+    const double ROOK_VALUE = 5.0;
+    const double QUEEN_VALUE = 9.0;
+    
+    for (int row = 0; row < 8; row++) {
+        for (int col = 0; col < 8; col++) {
+            Piece piece = board[row][col];
+            if (piece.type == EMPTY) continue;
+            
+            double pieceValue = 0.0;
+            switch(piece.type) {
+                case PAWN: pieceValue = PAWN_VALUE; break;
+                case KNIGHT: pieceValue = KNIGHT_VALUE; break;
+                case BISHOP: pieceValue = BISHOP_VALUE; break;
+                case ROOK: pieceValue = ROOK_VALUE; break;
+                case QUEEN: pieceValue = QUEEN_VALUE; break;
+                case KING: pieceValue = 0.0; break;  // King has no material value
+                default: pieceValue = 0.0;
+            }
+            
+            if (piece.color == perspective) {
+                score += pieceValue;
+            } else {
+                score -= pieceValue;
+            }
+        }
+    }
+    
+    return score;
+}
+
+// User-implementable heuristic function
+// Currently just calls material heuristic, but users can modify this
+double ChessBoard::heuristic(Color perspective) const {
+    // TODO: Implement your own heuristic here
+    // This is a placeholder that calls the material heuristic
+    // You can add positional evaluation, piece mobility, king safety, etc.
+    
+    return evaluatePosition(perspective);
+}
+
+// Apply a move (for AI search)
+bool ChessBoard::applyMove(const ChessMove& move) {
+    if (!move.isValid()) return false;
+    
+    // Convert ChessMove to string and use existing makeMove
+    string moveStr = move.toAlgebraic();
+    return makeMove(moveStr);
+}
+
+// Undo last move (already implemented as undoMove)
+void ChessBoard::undoLastMove() {
+    undoMove();
+}
+
+// Export game to PGN format
+string ChessBoard::exportPGN(const string& whitePlayer, const string& blackPlayer, const string& result) const {
+    stringstream pgn;
+    
+    // PGN headers
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+    
+    pgn << "[Event \"Casual Game\"]\n";
+    pgn << "[Site \"CLI Chess\"]\n";
+    pgn << "[Date \"" << (1900 + ltm->tm_year) << "."
+        << setfill('0') << setw(2) << (1 + ltm->tm_mon) << "."
+        << setfill('0') << setw(2) << ltm->tm_mday << "\"]\n";
+    pgn << "[Round \"1\"]\n";
+    pgn << "[White \"" << whitePlayer << "\"]\n";
+    pgn << "[Black \"" << blackPlayer << "\"]\n";
+    pgn << "[Result \"" << result << "\"]\n\n";
+    
+    // Move history
+    int moveNum = 1;
+    for (size_t i = 0; i < moveHistory.size(); i++) {
+        if (i % 2 == 0) {
+            pgn << moveNum << ". ";
+        }
+        
+        // Convert move to algebraic notation (simplified)
+        const Move& m = moveHistory[i];
+        pgn << string(1, 'a' + m.fromCol) << (8 - m.fromRow)
+            << string(1, 'a' + m.toCol) << (8 - m.toRow);
+        
+        if (i % 2 == 1) {
+            pgn << " ";
+            moveNum++;
+        } else {
+            pgn << " ";
+        }
+    }
+    
+    pgn << result << "\n";
+    
+    return pgn.str();
+}
+
+// ============================================================================
+// AI IMPLEMENTATIONS
+// ============================================================================
+
+// Random AI - picks a random legal move
+class RandomAI : public ChessAI {
+public:
+    string getName() const override {
+        return "Random AI";
+    }
+    
+    ChessMove getBestMove(const ChessBoard& board, Color color) override {
+        vector<ChessMove> legalMoves = board.generateLegalMoves(color);
+        if (legalMoves.empty()) {
+            return ChessMove();  // No legal moves
+        }
+        
+        int randomIndex = rand() % legalMoves.size();
+        return legalMoves[randomIndex];
+    }
+};
+
+// Move ordering helper - orders moves for better alpha-beta pruning
+class MoveOrderer {
+public:
+    static int scoreMoveForOrdering(const ChessMove& move, const ChessBoard& board) {
+        int score = 0;
+        
+        Piece fromPiece = board.getPieceAt(move.fromRow, move.fromCol);
+        Piece toPiece = board.getPieceAt(move.toRow, move.toCol);
+        
+        // MVV-LVA (Most Valuable Victim - Least Valuable Attacker)
+        if (toPiece.type != EMPTY) {
+            int victimValue = getPieceValue(toPiece.type);
+            int attackerValue = getPieceValue(fromPiece.type);
+            score += 1000 + (victimValue * 10 - attackerValue);
+        }
+        
+        // Promotions are very good
+        if (move.promotionPiece == QUEEN) {
+            score += 900;
+        } else if (move.promotionPiece != EMPTY) {
+            score += 800;
+        }
+        
+        // Center control bonus
+        if ((move.toRow == 3 || move.toRow == 4) && (move.toCol == 3 || move.toCol == 4)) {
+            score += 50;
+        }
+        
+        return score;
+    }
+    
+    static void orderMoves(vector<ChessMove>& moves, const ChessBoard& board) {
+        vector<pair<int, ChessMove>> scoredMoves;
+        for (const ChessMove& move : moves) {
+            int score = scoreMoveForOrdering(move, board);
+            scoredMoves.push_back({score, move});
+        }
+        
+        // Sort by score (highest first)
+        sort(scoredMoves.begin(), scoredMoves.end(), 
+             [](const pair<int, ChessMove>& a, const pair<int, ChessMove>& b) {
+                 return a.first > b.first;
+             });
+        
+        // Extract sorted moves
+        moves.clear();
+        for (const auto& sm : scoredMoves) {
+            moves.push_back(sm.second);
+        }
+    }
+    
+private:
+    static int getPieceValue(PieceType type) {
+        switch(type) {
+            case PAWN: return 1;
+            case KNIGHT: return 3;
+            case BISHOP: return 3;
+            case ROOK: return 5;
+            case QUEEN: return 9;
+            case KING: return 100;
+            default: return 0;
+        }
+    }
+};
+
+// Materialistic AI - uses only material evaluation with alpha-beta pruning
+class MaterialisticAI : public ChessAI {
+private:
+    int maxDepth;
+    
+    double materialEval(const ChessBoard& board, Color perspective) const {
+        // Check for checkmate first
+        if (board.isCheckmate(perspective)) {
+            return -numeric_limits<double>::infinity();
+        }
+        Color opponent = (perspective == WHITE) ? BLACK : WHITE;
+        if (board.isCheckmate(opponent)) {
+            return numeric_limits<double>::infinity();
+        }
+        
+        // Pure material count
+        return board.evaluatePosition(perspective);
+    }
+    
+    double alphaBeta(ChessBoard& board, int depth, double alpha, double beta, Color maximizingColor) {
+        // Terminal conditions
+        if (depth == 0) {
+            return materialEval(board, maximizingColor);
+        }
+        
+        Color currentColor = board.getCurrentTurn();
+        vector<ChessMove> legalMoves = board.generateLegalMoves(currentColor);
+        
+        if (legalMoves.empty()) {
+            if (board.isInCheck(currentColor)) {
+                // Checkmate
+                return (currentColor == maximizingColor) ? 
+                    -numeric_limits<double>::infinity() : 
+                    numeric_limits<double>::infinity();
+            } else {
+                // Stalemate
+                return 0.0;
+            }
+        }
+        
+        // Move ordering for better pruning
+        MoveOrderer::orderMoves(legalMoves, board);
+        
+        if (currentColor == maximizingColor) {
+            double maxEval = -numeric_limits<double>::infinity();
+            for (const ChessMove& move : legalMoves) {
+                board.applyMove(move);
+                double eval = alphaBeta(board, depth - 1, alpha, beta, maximizingColor);
+                board.undoLastMove();
+                
+                maxEval = max(maxEval, eval);
+                alpha = max(alpha, eval);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return maxEval;
+        } else {
+            double minEval = numeric_limits<double>::infinity();
+            for (const ChessMove& move : legalMoves) {
+                board.applyMove(move);
+                double eval = alphaBeta(board, depth - 1, alpha, beta, maximizingColor);
+                board.undoLastMove();
+                
+                minEval = min(minEval, eval);
+                beta = min(beta, eval);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return minEval;
+        }
+    }
+    
+public:
+    MaterialisticAI(int depth = 3) : maxDepth(depth) {}
+    
+    string getName() const override {
+        return "Materialistic AI (depth " + to_string(maxDepth) + ")";
+    }
+    
+    ChessMove getBestMove(const ChessBoard& board, Color color) override {
+        vector<ChessMove> legalMoves = board.generateLegalMoves(color);
+        if (legalMoves.empty()) {
+            return ChessMove();
+        }
+        
+        // Move ordering
+        MoveOrderer::orderMoves(legalMoves, board);
+        
+        ChessMove bestMove;
+        double bestEval = -numeric_limits<double>::infinity();
+        double alpha = -numeric_limits<double>::infinity();
+        double beta = numeric_limits<double>::infinity();
+        
+        ChessBoard searchBoard = board;
+        
+        for (const ChessMove& move : legalMoves) {
+            searchBoard.applyMove(move);
+            double eval = alphaBeta(searchBoard, maxDepth - 1, alpha, beta, color);
+            searchBoard.undoLastMove();
+            
+            if (eval > bestEval) {
+                bestEval = eval;
+                bestMove = move;
+            }
+            alpha = max(alpha, eval);
+        }
+        
+        cout << "AI evaluation: " << bestEval << endl;
+        return bestMove;
+    }
+};
+
+// Positional AI - advanced evaluation with positional factors
+class PositionalAI : public ChessAI {
+private:
+    int maxDepth;
+    
+    double positionalEval(const ChessBoard& board, Color perspective) const {
+        // Piece-square tables (defined inline)
+        static const double pawnTable[8][8] = {
+            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0},
+            {1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0},
+            {0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5},
+            {0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0},
+            {0.5,-0.5,-1.0, 0.0, 0.0,-1.0,-0.5, 0.5},
+            {0.5, 1.0, 1.0,-2.0,-2.0, 1.0, 1.0, 0.5},
+            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+        };
+        
+        static const double knightTable[8][8] = {
+            {-5.0,-4.0,-3.0,-3.0,-3.0,-3.0,-4.0,-5.0},
+            {-4.0,-2.0, 0.0, 0.0, 0.0, 0.0,-2.0,-4.0},
+            {-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0,-3.0},
+            {-3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5,-3.0},
+            {-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0,-3.0},
+            {-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5,-3.0},
+            {-4.0,-2.0, 0.0, 0.5, 0.5, 0.0,-2.0,-4.0},
+            {-5.0,-4.0,-3.0,-3.0,-3.0,-3.0,-4.0,-5.0}
+        };
+        
+        static const double bishopTable[8][8] = {
+            {-2.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-2.0},
+            {-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-1.0},
+            {-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0,-1.0},
+            {-1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5,-1.0},
+            {-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,-1.0},
+            {-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,-1.0},
+            {-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5,-1.0},
+            {-2.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-2.0}
+        };
+        
+        // Check for checkmate first
+        if (board.isCheckmate(perspective)) {
+            return -numeric_limits<double>::infinity();
+        }
+        Color opponent = (perspective == WHITE) ? BLACK : WHITE;
+        if (board.isCheckmate(opponent)) {
+            return numeric_limits<double>::infinity();
+        }
+        
+        double score = 0.0;
+        
+        // Material values (slightly favor bishops)
+        const double PAWN_VALUE = 1.0;
+        const double KNIGHT_VALUE = 3.0;
+        const double BISHOP_VALUE = 3.2;
+        const double ROOK_VALUE = 5.0;
+        const double QUEEN_VALUE = 9.0;
+        
+        // Track pawns for structure evaluation
+        int whitePawns[8] = {0}; // pawns per file
+        int blackPawns[8] = {0};
+        bool whitePassedPawn[8] = {false};
+        bool blackPassedPawn[8] = {false};
+        
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Piece piece = board.getPieceAt(row, col);
+                if (piece.type == EMPTY) continue;
+                
+                double pieceValue = 0.0;
+                double positionBonus = 0.0;
+                
+                switch(piece.type) {
+                    case PAWN:
+                        pieceValue = PAWN_VALUE;
+                        positionBonus = (piece.color == WHITE) ? 
+                            pawnTable[row][col] / 10.0 : 
+                            pawnTable[7-row][col] / 10.0;
+                        
+                        if (piece.color == WHITE) whitePawns[col]++;
+                        else blackPawns[col]++;
+                        break;
+                        
+                    case KNIGHT:
+                        pieceValue = KNIGHT_VALUE;
+                        positionBonus = knightTable[row][col] / 10.0;
+                        break;
+                        
+                    case BISHOP:
+                        pieceValue = BISHOP_VALUE;
+                        positionBonus = bishopTable[row][col] / 10.0;
+                        break;
+                        
+                    case ROOK:
+                        pieceValue = ROOK_VALUE;
+                        // Bonus for rook on open file
+                        if (whitePawns[col] == 0 && blackPawns[col] == 0) {
+                            positionBonus += 0.5;
+                        } else if ((piece.color == WHITE && whitePawns[col] == 0) ||
+                                   (piece.color == BLACK && blackPawns[col] == 0)) {
+                            positionBonus += 0.25;  // Semi-open file
+                        }
+                        break;
+                        
+                    case QUEEN:
+                        pieceValue = QUEEN_VALUE;
+                        break;
+                        
+                    case KING:
+                        pieceValue = 0.0;
+                        // King safety - penalize exposed king in middlegame
+                        // (simplified: just check if pawns are in front)
+                        if (piece.color == WHITE && row == 7) {
+                            if (col > 0 && board.getPieceAt(6, col-1).type == PAWN) positionBonus += 0.1;
+                            if (board.getPieceAt(6, col).type == PAWN) positionBonus += 0.1;
+                            if (col < 7 && board.getPieceAt(6, col+1).type == PAWN) positionBonus += 0.1;
+                        } else if (piece.color == BLACK && row == 0) {
+                            if (col > 0 && board.getPieceAt(1, col-1).type == PAWN) positionBonus += 0.1;
+                            if (board.getPieceAt(1, col).type == PAWN) positionBonus += 0.1;
+                            if (col < 7 && board.getPieceAt(1, col+1).type == PAWN) positionBonus += 0.1;
+                        }
+                        break;
+                        
+                    default:
+                        pieceValue = 0.0;
+                }
+                
+                double totalValue = pieceValue + positionBonus;
+                
+                if (piece.color == perspective) {
+                    score += totalValue;
+                } else {
+                    score -= totalValue;
+                }
+            }
+        }
+        
+        // Pawn structure evaluation
+        for (int col = 0; col < 8; col++) {
+            // Doubled pawns penalty
+            if (whitePawns[col] > 1) {
+                score -= 0.5 * (whitePawns[col] - 1) * (perspective == WHITE ? 1 : -1);
+            }
+            if (blackPawns[col] > 1) {
+                score -= 0.5 * (blackPawns[col] - 1) * (perspective == BLACK ? 1 : -1);
+            }
+            
+            // Isolated pawns penalty
+            bool whiteIsolated = (whitePawns[col] > 0 && 
+                                  (col == 0 || whitePawns[col-1] == 0) &&
+                                  (col == 7 || whitePawns[col+1] == 0));
+            bool blackIsolated = (blackPawns[col] > 0 && 
+                                  (col == 0 || blackPawns[col-1] == 0) &&
+                                  (col == 7 || blackPawns[col+1] == 0));
+            
+            if (whiteIsolated) {
+                score -= 0.5 * (perspective == WHITE ? 1 : -1);
+            }
+            if (blackIsolated) {
+                score -= 0.5 * (perspective == BLACK ? 1 : -1);
+            }
+            
+            // Passed pawns bonus (simplified check)
+            // A pawn is passed if no enemy pawns are in front of it or adjacent files
+            for (int row = 0; row < 8; row++) {
+                Piece p = board.getPieceAt(row, col);
+                if (p.type == PAWN) {
+                    bool isPassed = true;
+                    if (p.color == WHITE) {
+                        for (int r = row - 1; r >= 0; r--) {
+                            if (board.getPieceAt(r, col).type == PAWN && 
+                                board.getPieceAt(r, col).color == BLACK) {
+                                isPassed = false;
+                                break;
+                            }
+                            if (col > 0 && board.getPieceAt(r, col-1).type == PAWN && 
+                                board.getPieceAt(r, col-1).color == BLACK) {
+                                isPassed = false;
+                                break;
+                            }
+                            if (col < 7 && board.getPieceAt(r, col+1).type == PAWN && 
+                                board.getPieceAt(r, col+1).color == BLACK) {
+                                isPassed = false;
+                                break;
+                            }
+                        }
+                        if (isPassed) {
+                            double passedBonus = 0.5 + (6.0 - row) * 0.1;  // More valuable as it advances
+                            score += passedBonus * (perspective == WHITE ? 1 : -1);
+                        }
+                    } else {
+                        for (int r = row + 1; r < 8; r++) {
+                            if (board.getPieceAt(r, col).type == PAWN && 
+                                board.getPieceAt(r, col).color == WHITE) {
+                                isPassed = false;
+                                break;
+                            }
+                            if (col > 0 && board.getPieceAt(r, col-1).type == PAWN && 
+                                board.getPieceAt(r, col-1).color == WHITE) {
+                                isPassed = false;
+                                break;
+                            }
+                            if (col < 7 && board.getPieceAt(r, col+1).type == PAWN && 
+                                board.getPieceAt(r, col+1).color == WHITE) {
+                                isPassed = false;
+                                break;
+                            }
+                        }
+                        if (isPassed) {
+                            double passedBonus = 0.5 + (row - 1) * 0.1;
+                            score += passedBonus * (perspective == BLACK ? 1 : -1);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Mobility bonus
+        int myMoves = board.generateLegalMoves(perspective).size();
+        int opponentMoves = board.generateLegalMoves(opponent).size();
+        score += (myMoves - opponentMoves) * 0.1;
+        
+        // Center control bonus
+        for (int row = 3; row <= 4; row++) {
+            for (int col = 3; col <= 4; col++) {
+                Piece p = board.getPieceAt(row, col);
+                if (p.type != EMPTY) {
+                    double centerBonus = 0.3;
+                    if (p.color == perspective) {
+                        score += centerBonus;
+                    } else {
+                        score -= centerBonus;
+                    }
+                }
+            }
+        }
+        
+        return score;
+    }
+    
+    // Quiescence search - search captures to avoid horizon effect
+    double quiesce(ChessBoard& board, double alpha, double beta, Color maximizingColor, int depth = 3) {
+        if (depth == 0) {
+            return positionalEval(board, maximizingColor);
+        }
+        
+        double standPat = positionalEval(board, maximizingColor);
+        
+        Color currentColor = board.getCurrentTurn();
+        if (currentColor == maximizingColor) {
+            if (standPat >= beta) return beta;
+            if (alpha < standPat) alpha = standPat;
+        } else {
+            if (standPat <= alpha) return alpha;
+            if (beta > standPat) beta = standPat;
+        }
+        
+        // Only consider captures and promotions
+        vector<ChessMove> allMoves = board.generateLegalMoves(currentColor);
+        vector<ChessMove> captureMoves;
+        
+        for (const ChessMove& move : allMoves) {
+            Piece target = board.getPieceAt(move.toRow, move.toCol);
+            if (target.type != EMPTY || move.promotionPiece != EMPTY) {
+                captureMoves.push_back(move);
+            }
+        }
+        
+        if (captureMoves.empty()) {
+            return standPat;
+        }
+        
+        MoveOrderer::orderMoves(captureMoves, board);
+        
+        if (currentColor == maximizingColor) {
+            for (const ChessMove& move : captureMoves) {
+                board.applyMove(move);
+                double score = quiesce(board, alpha, beta, maximizingColor, depth - 1);
+                board.undoLastMove();
+                
+                if (score >= beta) return beta;
+                if (score > alpha) alpha = score;
+            }
+            return alpha;
+        } else {
+            for (const ChessMove& move : captureMoves) {
+                board.applyMove(move);
+                double score = quiesce(board, alpha, beta, maximizingColor, depth - 1);
+                board.undoLastMove();
+                
+                if (score <= alpha) return alpha;
+                if (score < beta) beta = score;
+            }
+            return beta;
+        }
+    }
+    
+    double alphaBeta(ChessBoard& board, int depth, double alpha, double beta, Color maximizingColor) {
+        // Terminal conditions
+        if (depth == 0) {
+            // Use quiescence search at leaf nodes
+            return quiesce(board, alpha, beta, maximizingColor);
+        }
+        
+        Color currentColor = board.getCurrentTurn();
+        vector<ChessMove> legalMoves = board.generateLegalMoves(currentColor);
+        
+        if (legalMoves.empty()) {
+            if (board.isInCheck(currentColor)) {
+                return (currentColor == maximizingColor) ? 
+                    -numeric_limits<double>::infinity() : 
+                    numeric_limits<double>::infinity();
+            } else {
+                return 0.0;
+            }
+        }
+        
+        // Move ordering
+        MoveOrderer::orderMoves(legalMoves, board);
+        
+        if (currentColor == maximizingColor) {
+            double maxEval = -numeric_limits<double>::infinity();
+            for (const ChessMove& move : legalMoves) {
+                board.applyMove(move);
+                double eval = alphaBeta(board, depth - 1, alpha, beta, maximizingColor);
+                board.undoLastMove();
+                
+                maxEval = max(maxEval, eval);
+                alpha = max(alpha, eval);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return maxEval;
+        } else {
+            double minEval = numeric_limits<double>::infinity();
+            for (const ChessMove& move : legalMoves) {
+                board.applyMove(move);
+                double eval = alphaBeta(board, depth - 1, alpha, beta, maximizingColor);
+                board.undoLastMove();
+                
+                minEval = min(minEval, eval);
+                beta = min(beta, eval);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return minEval;
+        }
+    }
+    
+public:
+    PositionalAI(int depth = 3) : maxDepth(depth) {}
+    
+    string getName() const override {
+        return "Positional AI (depth " + to_string(maxDepth) + ")";
+    }
+    
+    ChessMove getBestMove(const ChessBoard& board, Color color) override {
+        vector<ChessMove> legalMoves = board.generateLegalMoves(color);
+        if (legalMoves.empty()) {
+            return ChessMove();
+        }
+        
+        // Move ordering
+        MoveOrderer::orderMoves(legalMoves, board);
+        
+        ChessMove bestMove;
+        double bestEval = -numeric_limits<double>::infinity();
+        double alpha = -numeric_limits<double>::infinity();
+        double beta = numeric_limits<double>::infinity();
+        
+        ChessBoard searchBoard = board;
+        
+        for (const ChessMove& move : legalMoves) {
+            searchBoard.applyMove(move);
+            double eval = alphaBeta(searchBoard, maxDepth - 1, alpha, beta, color);
+            searchBoard.undoLastMove();
+            
+            if (eval > bestEval) {
+                bestEval = eval;
+                bestMove = move;
+            }
+            alpha = max(alpha, eval);
+        }
+        
+        cout << "AI evaluation: " << bestEval << endl;
+        return bestMove;
+    }
+};
+
+// For backward compatibility - keep old AlphaBetaAI as alias to MaterialisticAI
+class AlphaBetaAI : public MaterialisticAI {
+public:
+    AlphaBetaAI(int depth = 3) : MaterialisticAI(depth) {}
+    
+    string getName() const override {
+        int depth = 3;  // Default depth for display
+        return "Alpha-Beta AI (depth " + to_string(depth) + ")";
+    }
 };
 
 int main() {
+    srand(time(0));  // Seed random number generator
+    
     ChessBoard chess;
-    string input;
     
     cout << "=== Chess Game ===" << endl;
-    cout << "Enter moves in standard algebraic notation:" << endl;
-    cout << "  Examples: e4, Nf3, Bxc4, O-O, Qh5+" << endl;
-    cout << "  Long notation also works: e2e4 or e2-e4" << endl;
-    cout << "Commands:" << endl;
+    cout << "\nSelect White Player:" << endl;
+    cout << "  1. Human" << endl;
+    cout << "  2. Random AI" << endl;
+    cout << "  3. Materialistic AI (material + checkmate only)" << endl;
+    cout << "  4. Positional AI (advanced evaluation)" << endl;
+    cout << "Choice (1-4): ";
+    
+    int whiteChoice;
+    cin >> whiteChoice;
+    cin.ignore();
+    
+    int whiteDepth = 3;
+    if (whiteChoice >= 3 && whiteChoice <= 4) {
+        cout << "Select search depth for White (1-6, recommended 3-4): ";
+        cin >> whiteDepth;
+        cin.ignore();
+        if (whiteDepth < 1) whiteDepth = 1;
+        if (whiteDepth > 6) whiteDepth = 6;
+    }
+    
+    cout << "\nSelect Black Player:" << endl;
+    cout << "  1. Human" << endl;
+    cout << "  2. Random AI" << endl;
+    cout << "  3. Materialistic AI (material + checkmate only)" << endl;
+    cout << "  4. Positional AI (advanced evaluation)" << endl;
+    cout << "Choice (1-4): ";
+    
+    int blackChoice;
+    cin >> blackChoice;
+    cin.ignore();
+    
+    int blackDepth = 3;
+    if (blackChoice >= 3 && blackChoice <= 4) {
+        cout << "Select search depth for Black (1-6, recommended 3-4): ";
+        cin >> blackDepth;
+        cin.ignore();
+        if (blackDepth < 1) blackDepth = 1;
+        if (blackDepth > 6) blackDepth = 6;
+    }
+    
+    // Create AI players
+    ChessAI* whiteAI = nullptr;
+    ChessAI* blackAI = nullptr;
+    string whitePlayerName = "Human";
+    string blackPlayerName = "Human";
+    
+    if (whiteChoice == 2) {
+        whiteAI = new RandomAI();
+        whitePlayerName = whiteAI->getName();
+    } else if (whiteChoice == 3) {
+        whiteAI = new MaterialisticAI(whiteDepth);
+        whitePlayerName = whiteAI->getName();
+    } else if (whiteChoice == 4) {
+        whiteAI = new PositionalAI(whiteDepth);
+        whitePlayerName = whiteAI->getName();
+    }
+    
+    if (blackChoice == 2) {
+        blackAI = new RandomAI();
+        blackPlayerName = blackAI->getName();
+    } else if (blackChoice == 3) {
+        blackAI = new MaterialisticAI(blackDepth);
+        blackPlayerName = blackAI->getName();
+    } else if (blackChoice == 4) {
+        blackAI = new PositionalAI(blackDepth);
+        blackPlayerName = blackAI->getName();
+    }
+    
+    cout << "\n=== Game Start ===" << endl;
+    cout << "White: " << whitePlayerName << endl;
+    cout << "Black: " << blackPlayerName << endl;
+    
+    // Display complexity information
+    cout << "\n** Thinking Time Scaling **" << endl;
+    cout << "Approximate time increases per depth level:" << endl;
+    cout << "  Depth 1: <0.1s  (instant)" << endl;
+    cout << "  Depth 2: <0.5s  (very fast)" << endl;
+    cout << "  Depth 3: 1-3s   (fast)" << endl;
+    cout << "  Depth 4: 5-15s  (moderate)" << endl;
+    cout << "  Depth 5: 30-90s (slow)" << endl;
+    cout << "  Depth 6: 2-10min (very slow)" << endl;
+    cout << "Note: Times vary based on position complexity and move ordering.\n" << endl;
+    
+    cout << "\nCommands:" << endl;
+    cout << "  Enter moves in algebraic notation (e.g., e4, Nf3, O-O)" << endl;
     cout << "  'f' or 'flip' - Flip board" << endl;
     cout << "  'u' or 'undo' - Undo last move" << endl;
+    cout << "  'save' - Save game as PGN" << endl;
     cout << "  'q' or 'quit' - Exit game" << endl;
     
     chess.display();
     
-    while (true) {
-        cout << "\nEnter move: ";
-        getline(cin, input);
+    string gameResult = "*";  // Ongoing game
+    bool gameEnded = false;
+    
+    while (!gameEnded) {
+        Color currentTurn = chess.getCurrentTurn();
+        ChessAI* currentAI = (currentTurn == WHITE) ? whiteAI : blackAI;
         
-        // Trim whitespace
-        input.erase(0, input.find_first_not_of(" \t"));
-        input.erase(input.find_last_not_of(" \t") + 1);
-        
-        if (input.empty()) continue;
-        
-        // Convert to lowercase for command checking
-        string lowerInput = input;
-        transform(lowerInput.begin(), lowerInput.end(), lowerInput.begin(), ::tolower);
-        
-        if (lowerInput == "q" || lowerInput == "quit" || lowerInput == "exit") {
-            cout << "Thanks for playing!" << endl;
-            break;
-        }
-        
-        if (lowerInput == "f" || lowerInput == "flip") {
-            chess.flipBoard();
-            chess.display();
-            continue;
-        }
-        
-        if (lowerInput == "u" || lowerInput == "undo") {
-            if (chess.undoMove()) {
-                chess.display();
-            } else {
-                cout << "No moves to undo!" << endl;
+        if (currentAI != nullptr) {
+            // AI move
+            cout << "\n" << (currentTurn == WHITE ? whitePlayerName : blackPlayerName) << " is thinking..." << endl;
+            
+            auto startTime = clock();
+            ChessMove aiMove = currentAI->getBestMove(chess, currentTurn);
+            auto endTime = clock();
+            
+            double thinkTime = double(endTime - startTime) / CLOCKS_PER_SEC;
+            
+            if (!aiMove.isValid()) {
+                cout << "AI has no legal moves!" << endl;
+                break;
             }
-            continue;
-        }
-        
-        if (chess.makeMove(input)) {
-            chess.display();
+            
+            string moveStr = aiMove.toAlgebraic();
+            cout << "AI plays: " << moveStr << " (thought for " << thinkTime << "s)" << endl;
+            
+            if (chess.makeMove(moveStr)) {
+                chess.display();
+                
+                // Check for game end
+                if (chess.isCheckmate(chess.getCurrentTurn())) {
+                    gameResult = (currentTurn == WHITE) ? "1-0" : "0-1";
+                    gameEnded = true;
+                } else if (chess.isStalemate(chess.getCurrentTurn())) {
+                    gameResult = "1/2-1/2";
+                    gameEnded = true;
+                }
+            } else {
+                cout << "AI made an invalid move!" << endl;
+                break;
+            }
         } else {
-            cout << "Invalid move! Try again." << endl;
+            // Human move
+            cout << "\nEnter move: ";
+            string input;
+            getline(cin, input);
+            
+            // Trim whitespace
+            input.erase(0, input.find_first_not_of(" \t"));
+            input.erase(input.find_last_not_of(" \t") + 1);
+            
+            if (input.empty()) continue;
+            
+            // Convert to lowercase for command checking
+            string lowerInput = input;
+            transform(lowerInput.begin(), lowerInput.end(), lowerInput.begin(), ::tolower);
+            
+            if (lowerInput == "q" || lowerInput == "quit" || lowerInput == "exit") {
+                cout << "Game ended by user." << endl;
+                gameResult = "*";
+                break;
+            }
+            
+            if (lowerInput == "f" || lowerInput == "flip") {
+                chess.flipBoard();
+                chess.display();
+                continue;
+            }
+            
+            if (lowerInput == "u" || lowerInput == "undo") {
+                if (chess.undoMove()) {
+                    chess.display();
+                } else {
+                    cout << "No moves to undo!" << endl;
+                }
+                continue;
+            }
+            
+            if (lowerInput == "save") {
+                // Generate filename with timestamp
+                time_t now = time(0);
+                tm* ltm = localtime(&now);
+                stringstream filename;
+                filename << "chess_"
+                         << (1900 + ltm->tm_year)
+                         << setfill('0') << setw(2) << (1 + ltm->tm_mon)
+                         << setfill('0') << setw(2) << ltm->tm_mday << "_"
+                         << setfill('0') << setw(2) << ltm->tm_hour
+                         << setfill('0') << setw(2) << ltm->tm_min
+                         << setfill('0') << setw(2) << ltm->tm_sec
+                         << ".pgn";
+                
+                string pgnContent = chess.exportPGN(whitePlayerName, blackPlayerName, gameResult);
+                ofstream pgnFile(filename.str());
+                pgnFile << pgnContent;
+                pgnFile.close();
+                
+                cout << "Game saved to: " << filename.str() << endl;
+                continue;
+            }
+            
+            if (chess.makeMove(input)) {
+                chess.display();
+                
+                // Check for game end
+                if (chess.isCheckmate(chess.getCurrentTurn())) {
+                    gameResult = (currentTurn == WHITE) ? "1-0" : "0-1";
+                    gameEnded = true;
+                } else if (chess.isStalemate(chess.getCurrentTurn())) {
+                    gameResult = "1/2-1/2";
+                    gameEnded = true;
+                }
+            } else {
+                cout << "Invalid move! Try again." << endl;
+            }
         }
     }
+    
+    // Final save prompt
+    if (gameResult != "*") {
+        cout << "\nGame Over! Result: " << gameResult << endl;
+        cout << "Save game? (y/n): ";
+        string response;
+        getline(cin, response);
+        
+        if (response == "y" || response == "Y" || response == "yes") {
+            time_t now = time(0);
+            tm* ltm = localtime(&now);
+            stringstream filename;
+            filename << "chess_"
+                     << (1900 + ltm->tm_year)
+                     << setfill('0') << setw(2) << (1 + ltm->tm_mon)
+                     << setfill('0') << setw(2) << ltm->tm_mday << "_"
+                     << setfill('0') << setw(2) << ltm->tm_hour
+                     << setfill('0') << setw(2) << ltm->tm_min
+                     << setfill('0') << setw(2) << ltm->tm_sec
+                     << ".pgn";
+            
+            string pgnContent = chess.exportPGN(whitePlayerName, blackPlayerName, gameResult);
+            ofstream pgnFile(filename.str());
+            pgnFile << pgnContent;
+            pgnFile.close();
+            
+            cout << "Game saved to: " << filename.str() << endl;
+        }
+    }
+    
+    // Cleanup
+    delete whiteAI;
+    delete blackAI;
     
     return 0;
 }
