@@ -70,10 +70,11 @@ struct Move {
     bool wasEnPassant;
     int prevEnPassantCol;
     bool wasCastling;
+    double evaluation;  // Store AI evaluation for PGN export
     
-    Move(int fr, int fc, int tr, int tc, Piece cap, bool ep, int epCol, bool castle = false) 
+    Move(int fr, int fc, int tr, int tc, Piece cap, bool ep, int epCol, bool castle = false, double eval = 0.0) 
         : fromRow(fr), fromCol(fc), toRow(tr), toCol(tc), capturedPiece(cap), 
-          wasEnPassant(ep), prevEnPassantCol(epCol), wasCastling(castle) {}
+          wasEnPassant(ep), prevEnPassantCol(epCol), wasCastling(castle), evaluation(eval) {}
 };
 
 class ChessBoard {
@@ -909,6 +910,13 @@ public:
         return board[row][col];
     }
     
+    // Set evaluation for last move (for PGN export)
+    void setLastMoveEvaluation(double eval) {
+        if (!moveHistory.empty()) {
+            moveHistory.back().evaluation = eval;
+        }
+    }
+    
     // PGN export
     string exportPGN(const string& whitePlayer, const string& blackPlayer, const string& result) const;
 };
@@ -1100,7 +1108,7 @@ void ChessBoard::undoLastMove() {
     undoMove();
 }
 
-// Export game to PGN format
+// Export game to PGN format with evaluation tags
 string ChessBoard::exportPGN(const string& whitePlayer, const string& blackPlayer, const string& result) const {
     stringstream pgn;
     
@@ -1118,7 +1126,7 @@ string ChessBoard::exportPGN(const string& whitePlayer, const string& blackPlaye
     pgn << "[Black \"" << blackPlayer << "\"]\n";
     pgn << "[Result \"" << result << "\"]\n\n";
     
-    // Move history
+    // Move history with evaluation tags
     int moveNum = 1;
     for (size_t i = 0; i < moveHistory.size(); i++) {
         if (i % 2 == 0) {
@@ -1129,6 +1137,19 @@ string ChessBoard::exportPGN(const string& whitePlayer, const string& blackPlaye
         const Move& m = moveHistory[i];
         pgn << string(1, 'a' + m.fromCol) << (8 - m.fromRow)
             << string(1, 'a' + m.toCol) << (8 - m.toRow);
+        
+        // Add evaluation tag if available (Lichess format)
+        if (m.evaluation != 0.0) {
+            pgn << " {[%eval ";
+            if (m.evaluation >= 100000.0) {
+                pgn << "#" << ((int)((m.evaluation - 100000.0) / 1000.0) + 1);  // Mate in N
+            } else if (m.evaluation <= -100000.0) {
+                pgn << "#-" << ((int)((-m.evaluation - 100000.0) / 1000.0) + 1);
+            } else {
+                pgn << fixed << setprecision(2) << m.evaluation;
+            }
+            pgn << "]}";
+        }
         
         if (i % 2 == 1) {
             pgn << " ";
@@ -1230,6 +1251,9 @@ private:
     }
 };
 
+// Store evaluation globally for the last AI move (for PGN export)
+double lastAIEvaluation = 0.0;
+
 // Materialistic AI - uses only material evaluation with alpha-beta pruning
 class MaterialisticAI : public ChessAI {
 private:
@@ -1320,8 +1344,8 @@ public:
         // Move ordering
         MoveOrderer::orderMoves(legalMoves, board);
         
-        ChessMove bestMove;
-        double bestEval = -numeric_limits<double>::infinity();
+        ChessMove bestMove = legalMoves[0];  // Always have fallback
+        double bestEval = -100000.0;
         double alpha = -numeric_limits<double>::infinity();
         double beta = numeric_limits<double>::infinity();
         
@@ -1339,7 +1363,19 @@ public:
             alpha = max(alpha, eval);
         }
         
-        cout << "AI evaluation: " << bestEval << endl;
+        cout << "AI evaluation: ";
+        if (bestEval >= 100000.0) {
+            cout << "#" << ((int)((bestEval - 100000.0) / 1000.0) + 1);
+        } else if (bestEval <= -100000.0) {
+            cout << "#-" << ((int)((-bestEval - 100000.0) / 1000.0) + 1);
+        } else {
+            cout << bestEval;
+        }
+        cout << endl;
+        
+        // Store for PGN export
+        lastAIEvaluation = bestEval;
+        
         return bestMove;
     }
 };
@@ -1384,13 +1420,14 @@ private:
             {-2.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-2.0}
         };
         
-        // Check for checkmate first
+        // Check for checkmate first - but return large negative, not -inf
+        // This allows finding the move that delays checkmate longest
         if (board.isCheckmate(perspective)) {
-            return -numeric_limits<double>::infinity();
+            return -100000.0;  // Very bad but not -inf so we can compare moves
         }
         Color opponent = (perspective == WHITE) ? BLACK : WHITE;
         if (board.isCheckmate(opponent)) {
-            return numeric_limits<double>::infinity();
+            return 100000.0;  // Very good but not +inf
         }
         
         double score = 0.0;
@@ -1405,8 +1442,12 @@ private:
         // Track pawns for structure evaluation
         int whitePawns[8] = {0}; // pawns per file
         int blackPawns[8] = {0};
-        bool whitePassedPawn[8] = {false};
-        bool blackPassedPawn[8] = {false};
+        
+        // Track piece development (opening principles)
+        int whiteDeveloped = 0;
+        int blackDeveloped = 0;
+        int whiteMinorPieces = 0;
+        int blackMinorPieces = 0;
         
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -1417,7 +1458,7 @@ private:
                 double positionBonus = 0.0;
                 
                 switch(piece.type) {
-                    case PAWN:
+                    case PAWN: {
                         pieceValue = PAWN_VALUE;
                         positionBonus = (piece.color == WHITE) ? 
                             pawnTable[row][col] / 10.0 : 
@@ -1426,18 +1467,90 @@ private:
                         if (piece.color == WHITE) whitePawns[col]++;
                         else blackPawns[col]++;
                         break;
+                    }
                         
-                    case KNIGHT:
+                    case KNIGHT: {
                         pieceValue = KNIGHT_VALUE;
                         positionBonus = knightTable[row][col] / 10.0;
-                        break;
                         
-                    case BISHOP:
+                        // Count minor pieces for development
+                        if (piece.color == WHITE) {
+                            whiteMinorPieces++;
+                            if (row != 7) whiteDeveloped++;  // Moved from back rank
+                        } else {
+                            blackMinorPieces++;
+                            if (row != 0) blackDeveloped++;
+                        }
+                        
+                        // KNIGHT SAFETY: Penalize knights with few escape squares
+                        // Check how many squares the knight can move to
+                        int escapeSquares = 0;
+                        int knightMoves[8][2] = {{-2,-1},{-2,1},{-1,-2},{-1,2},{1,-2},{1,2},{2,-1},{2,1}};
+                        for (int i = 0; i < 8; i++) {
+                            int newRow = row + knightMoves[i][0];
+                            int newCol = col + knightMoves[i][1];
+                            if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                                Piece target = board.getPieceAt(newRow, newCol);
+                                if (target.type == EMPTY || target.color != piece.color) {
+                                    escapeSquares++;
+                                }
+                            }
+                        }
+                        
+                        // Heavily penalize knights with ≤2 escape squares (likely trapped)
+                        if (escapeSquares <= 2) {
+                            positionBonus -= 2.0;  // Major penalty for trapped knights
+                        } else if (escapeSquares <= 3) {
+                            positionBonus -= 0.5;  // Minor penalty for restricted knights
+                        }
+                        
+                        // OPENING PRINCIPLE: Don't move knights to e4/e5/d4/d5 too early
+                        // unless well-supported
+                        bool isEarlyGame2 = (whiteDeveloped + blackDeveloped < 6);
+                        if (isEarlyGame2 && ((row == 4 && (col == 3 || col == 4)) || 
+                                            (row == 3 && (col == 3 || col == 4)))) {
+                            // Check if knight is supported by pawns
+                            bool supported = false;
+                            if (piece.color == WHITE) {
+                                // White knight on central square
+                                if (row < 7) {
+                                    if (col > 0 && board.getPieceAt(row+1, col-1).type == PAWN && 
+                                        board.getPieceAt(row+1, col-1).color == WHITE) supported = true;
+                                    if (col < 7 && board.getPieceAt(row+1, col+1).type == PAWN && 
+                                        board.getPieceAt(row+1, col+1).color == WHITE) supported = true;
+                                }
+                            } else {
+                                // Black knight on central square
+                                if (row > 0) {
+                                    if (col > 0 && board.getPieceAt(row-1, col-1).type == PAWN && 
+                                        board.getPieceAt(row-1, col-1).color == BLACK) supported = true;
+                                    if (col < 7 && board.getPieceAt(row-1, col+1).type == PAWN && 
+                                        board.getPieceAt(row-1, col+1).color == BLACK) supported = true;
+                                }
+                            }
+                            
+                            if (!supported) {
+                                positionBonus -= 1.5;  // Penalty for unsupported central knights in opening
+                            }
+                        }
+                        break;
+                    }
+                        
+                    case BISHOP: {
                         pieceValue = BISHOP_VALUE;
                         positionBonus = bishopTable[row][col] / 10.0;
-                        break;
                         
-                    case ROOK:
+                        if (piece.color == WHITE) {
+                            whiteMinorPieces++;
+                            if (row != 7) whiteDeveloped++;
+                        } else {
+                            blackMinorPieces++;
+                            if (row != 0) blackDeveloped++;
+                        }
+                        break;
+                    }
+                        
+                    case ROOK: {
                         pieceValue = ROOK_VALUE;
                         // Bonus for rook on open file
                         if (whitePawns[col] == 0 && blackPawns[col] == 0) {
@@ -1447,15 +1560,26 @@ private:
                             positionBonus += 0.25;  // Semi-open file
                         }
                         break;
+                    }
                         
-                    case QUEEN:
+                    case QUEEN: {
                         pieceValue = QUEEN_VALUE;
-                        break;
                         
-                    case KING:
+                        // OPENING PRINCIPLE: Penalize early queen development
+                        bool earlyGame2 = (whiteDeveloped + blackDeveloped < 4);
+                        if (earlyGame2) {
+                            if (piece.color == WHITE && row < 6) {
+                                positionBonus -= 1.0;  // Queen moved too early
+                            } else if (piece.color == BLACK && row > 1) {
+                                positionBonus -= 1.0;
+                            }
+                        }
+                        break;
+                    }
+                        
+                    case KING: {
                         pieceValue = 0.0;
                         // King safety - penalize exposed king in middlegame
-                        // (simplified: just check if pawns are in front)
                         if (piece.color == WHITE && row == 7) {
                             if (col > 0 && board.getPieceAt(6, col-1).type == PAWN) positionBonus += 0.1;
                             if (board.getPieceAt(6, col).type == PAWN) positionBonus += 0.1;
@@ -1466,6 +1590,7 @@ private:
                             if (col < 7 && board.getPieceAt(1, col+1).type == PAWN) positionBonus += 0.1;
                         }
                         break;
+                    }
                         
                     default:
                         pieceValue = 0.0;
@@ -1479,6 +1604,15 @@ private:
                     score -= totalValue;
                 }
             }
+        }
+        
+        // OPENING PRINCIPLE: Bonus for developing minor pieces
+        if (perspective == WHITE) {
+            score += whiteDeveloped * 0.15;  // Small bonus per developed piece
+            score -= blackDeveloped * 0.15;
+        } else {
+            score += blackDeveloped * 0.15;
+            score -= whiteDeveloped * 0.15;
         }
         
         // Pawn structure evaluation
@@ -1507,7 +1641,6 @@ private:
             }
             
             // Passed pawns bonus (simplified check)
-            // A pawn is passed if no enemy pawns are in front of it or adjacent files
             for (int row = 0; row < 8; row++) {
                 Piece p = board.getPieceAt(row, col);
                 if (p.type == PAWN) {
@@ -1531,7 +1664,7 @@ private:
                             }
                         }
                         if (isPassed) {
-                            double passedBonus = 0.5 + (6.0 - row) * 0.1;  // More valuable as it advances
+                            double passedBonus = 0.5 + (6.0 - row) * 0.1;
                             score += passedBonus * (perspective == WHITE ? 1 : -1);
                         }
                     } else {
@@ -1705,32 +1838,48 @@ public:
     ChessMove getBestMove(const ChessBoard& board, Color color) override {
         vector<ChessMove> legalMoves = board.generateLegalMoves(color);
         if (legalMoves.empty()) {
-            return ChessMove();
+            return ChessMove();  // No legal moves - but this should be caught before calling
         }
         
         // Move ordering
         MoveOrderer::orderMoves(legalMoves, board);
         
-        ChessMove bestMove;
-        double bestEval = -numeric_limits<double>::infinity();
+        ChessMove bestMove = legalMoves[0];  // Always have at least one move as fallback
+        double bestEval = -100000.0;  // Start very low
         double alpha = -numeric_limits<double>::infinity();
         double beta = numeric_limits<double>::infinity();
         
         ChessBoard searchBoard = board;
+        
+        // If we're in checkmate, find the move that delays it longest
+        bool inCheckmate = board.isCheckmate(color);
         
         for (const ChessMove& move : legalMoves) {
             searchBoard.applyMove(move);
             double eval = alphaBeta(searchBoard, maxDepth - 1, alpha, beta, color);
             searchBoard.undoLastMove();
             
-            if (eval > bestEval) {
+            // Always update best move if this is better OR if we haven't found any valid move yet
+            if (eval > bestEval || (inCheckmate && bestMove.fromRow == legalMoves[0].fromRow)) {
                 bestEval = eval;
                 bestMove = move;
             }
             alpha = max(alpha, eval);
         }
         
-        cout << "AI evaluation: " << bestEval << endl;
+        cout << "AI evaluation: ";
+        if (bestEval >= 100000.0) {
+            cout << "#" << ((int)((bestEval - 100000.0) / 1000.0) + 1);
+        } else if (bestEval <= -100000.0) {
+            cout << "#-" << ((int)((-bestEval - 100000.0) / 1000.0) + 1);
+        } else {
+            cout << bestEval;
+        }
+        cout << endl;
+        
+        // Store for PGN export
+        lastAIEvaluation = bestEval;
+        
         return bestMove;
     }
 };
@@ -1862,14 +2011,24 @@ int main() {
             double thinkTime = double(endTime - startTime) / CLOCKS_PER_SEC;
             
             if (!aiMove.isValid()) {
-                cout << "AI has no legal moves!" << endl;
-                break;
+                // No valid moves - game should already be over
+                cout << "No legal moves available." << endl;
+                if (chess.isCheckmate(currentTurn)) {
+                    gameResult = (currentTurn == WHITE) ? "0-1" : "1-0";
+                } else {
+                    gameResult = "1/2-1/2";  // Stalemate
+                }
+                gameEnded = true;
+                continue;
             }
             
             string moveStr = aiMove.toAlgebraic();
             cout << "AI plays: " << moveStr << " (thought for " << thinkTime << "s)" << endl;
             
             if (chess.makeMove(moveStr)) {
+                // Store AI evaluation for PGN
+                chess.setLastMoveEvaluation(lastAIEvaluation);
+                
                 chess.display();
                 
                 // Check for game end
@@ -1961,14 +2120,41 @@ int main() {
         }
     }
     
-    // Final save prompt
-    if (gameResult != "*") {
+    // Final save prompt - always offer if game ended properly
+    if (gameEnded) {
         cout << "\nGame Over! Result: " << gameResult << endl;
         cout << "Save game? (y/n): ";
         string response;
         getline(cin, response);
         
-        if (response == "y" || response == "Y" || response == "yes") {
+        if (response == "y" || response == "Y" || response == "yes" || response == "YES") {
+            time_t now = time(0);
+            tm* ltm = localtime(&now);
+            stringstream filename;
+            filename << "chess_"
+                     << (1900 + ltm->tm_year)
+                     << setfill('0') << setw(2) << (1 + ltm->tm_mon)
+                     << setfill('0') << setw(2) << ltm->tm_mday << "_"
+                     << setfill('0') << setw(2) << ltm->tm_hour
+                     << setfill('0') << setw(2) << ltm->tm_min
+                     << setfill('0') << setw(2) << ltm->tm_sec
+                     << ".pgn";
+            
+            string pgnContent = chess.exportPGN(whitePlayerName, blackPlayerName, gameResult);
+            ofstream pgnFile(filename.str());
+            pgnFile << pgnContent;
+            pgnFile.close();
+            
+            cout << "Game saved to: " << filename.str() << endl;
+        }
+    } else if (gameResult != "*") {
+        // Game ended abnormally but still offer save
+        cout << "\nGame ended. Result: " << gameResult << endl;
+        cout << "Save game? (y/n): ";
+        string response;
+        getline(cin, response);
+        
+        if (response == "y" || response == "Y" || response == "yes" || response == "YES") {
             time_t now = time(0);
             tm* ltm = localtime(&now);
             stringstream filename;
