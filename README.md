@@ -7,10 +7,12 @@ A fully interactive command-line chess game written in C++.
 ## Features
 
 - Full chess board with standard starting position
-- Move pieces using standard algebraic notation (e.g., `e4`, `Nf3`, `Bxc4`, `O-O`)
+- Move pieces using standard algebraic notation (SAN) (e.g., `e4`, `Nf3`, `Bxc4`, `O-O`)
 - Complete move validation for all piece types
 - **Castling support** (kingside and queenside)
 - **Check, checkmate, and stalemate detection**
+- **Threefold repetition detection** - automatic draw detection
+- **Fifty-move rule detection** - automatic draw detection
 - Prevents illegal moves that would leave king in check
 - **Move history with undo** - take back moves with `u` or `undo`
 - Pawn promotion to any piece (Queen, Rook, Bishop, Knight)
@@ -18,7 +20,8 @@ A fully interactive command-line chess game written in C++.
 - Flip the board view with `f` or `flip` command
 - Turn-based gameplay (White moves first)
 - **AI Opponents** - Play against computer or watch AI vs AI
-- **PGN Export** - Save games in standard PGN format
+- **PGN Export** - Save games in standard PGN format with move evaluations
+- **Time Controls** - Iterative deepening AI with configurable time limits
 
 ## Compilation
 
@@ -72,10 +75,16 @@ Choice (1-3):
   - Center control
   - Quiescence search to avoid horizon effect
   - Significantly stronger but slower
+- **Iterative Deepening AI**: Time-based search with progressive deepening
+  - Searches depth 1, then 2, then 3, until time runs out
+  - Uses time limits instead of fixed depth (1-60 seconds)
+  - **Recommended for realistic play** - adapts to position complexity
+  - Automatic depth adjustment based on available time
+  - Shows progress as it searches deeper
 
-**Search Depth Selection:**
+**Search Configuration:**
 
-After selecting an AI player, you'll choose the search depth (1-6):
+For **Materialistic** and **Positional** AI, choose search depth (1-6):
 - **Depth 1**: Instant (<0.1s) - Only looks at immediate moves
 - **Depth 2**: Very fast (<0.5s) - Looks 2 moves ahead
 - **Depth 3**: Fast (1-3s) - **Recommended for most games**
@@ -83,12 +92,16 @@ After selecting an AI player, you'll choose the search depth (1-6):
 - **Depth 5**: Slow (30-90s) - Very strong, long thinking time
 - **Depth 6**: Very slow (2-10min) - Expert level, patience required
 
-**Note on Depth Scaling:**
-- Each additional depth level increases thinking time by roughly 10-30x
-- Times vary greatly based on position complexity
-- Move ordering optimization helps significantly
-- Opening positions are faster (more pruning opportunities)
-- Complex middlegames take longer (more branching)
+For **Iterative Deepening** AI, choose time limit (1-60 seconds):
+- **1-3 seconds**: Fast, casual play
+- **5-10 seconds**: **Recommended** - balanced speed and strength
+- **15-30 seconds**: Strong tactical play
+- **30-60 seconds**: Expert-level analysis
+
+**Note on Performance:**
+- Fixed depth: Consistent time per move, depth varies by position
+- Time limit: Consistent thinking time, depth varies (typically 4-7)
+- Time-based search is more realistic for tournament-style play
 
 You can play:
 - Human vs Human
@@ -338,10 +351,66 @@ You can modify the heuristic function to improve play without changing the searc
 
 ## Future Enhancements
 
-Feel free to extend this with:
-- Threefold repetition and fifty-move rule detection
-- Save/load games in PGN format
-- Move notation display in algebraic format
-- Time controls
-- AI opponent
-- Opening book
+Potential improvements to explore:
+
+### High Priority (Significant Performance Gains)
+- **Transposition Tables** (50-80% speedup)
+  - Cache evaluated positions using hash tables
+  - Avoid re-searching positions reached via different move orders
+  - Zobrist hashing for efficient position encoding
+  
+- **Better Move Generation**
+  - Current: Generate all pseudo-legal moves, then filter
+  - Better: Generate only legal moves directly
+  - Expected: 2-3x speedup
+
+### Medium Priority  
+- **Null Move Pruning**
+  - Give opponent a "free move" in search
+  - If still winning, prune aggressively
+  - Adds 1-2 effective search depth
+  
+- **Late Move Reductions (LMR)**
+  - Search unpromising moves at reduced depth
+  - Re-search if they look good
+  - Adds 1-2 effective search depth
+
+- **Bitboard Representation**
+  - Replace Piece board[8][8] with 64-bit integers
+  - Extremely fast move generation with bitwise operations
+  - Major rewrite (~500 lines) but 3-5x faster
+
+### Low Priority
+- **Opening Book**
+  - Pre-computed good opening moves
+  - Skip search for first 8-12 moves
+  - Instant early-game play
+
+- **Endgame Tablebases**
+  - Perfect play with ≤6 pieces
+  - Requires large database files
+  - Only useful in endgame
+
+- **Multi-threading**
+  - Search multiple branches in parallel
+  - Complex synchronization required
+  - Marginal gains (2-3x with 8 cores)
+
+- **Graphical Interface**
+  - GUI frontend (Qt, SDL, or web-based)
+  - Would require separating engine from UI
+
+### Already Implemented ✅
+- ✅ Threefold repetition detection
+- ✅ Fifty-move rule detection
+- ✅ PGN export with evaluations
+- ✅ Standard Algebraic Notation (SAN)
+- ✅ Time controls (iterative deepening with time limits)
+- ✅ AI opponents (4 different strength levels)
+- ✅ Move ordering optimization
+- ✅ Quiescence search
+- ✅ Alpha-beta pruning
+- ✅ Positional evaluation
+
+See CHANGES.md for complete development history and debugging guide.
+

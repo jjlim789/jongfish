@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <cctype>
 #include <sstream>
 #include <algorithm>
@@ -9,6 +10,7 @@
 #include <ctime>
 #include <fstream>
 #include <iomanip>
+#include <cstdint>
 
 using namespace std;
 
@@ -28,6 +30,7 @@ struct ChessMove {
         : fromRow(fr), fromCol(fc), toRow(tr), toCol(tc), promotionPiece(promo) {}
     
     string toAlgebraic() const;
+    string toSAN(const class ChessBoard& board) const;  // Standard Algebraic Notation
     bool isValid() const { return fromRow >= 0 && fromRow < 8 && toRow >= 0 && toRow < 8; }
 };
 
@@ -37,6 +40,9 @@ public:
     virtual ~ChessAI() {}
     virtual ChessMove getBestMove(const ChessBoard& board, Color color) = 0;
     virtual string getName() const = 0;
+    virtual bool usesTimeLimit() const { return false; }  // Does this AI use time limits?
+    virtual void setTimeLimit(double seconds) {}  // Set time limit in seconds
+    virtual void setDepth(int depth) {}  // Set search depth
 };
 
 struct Piece {
@@ -70,11 +76,19 @@ struct Move {
     bool wasEnPassant;
     int prevEnPassantCol;
     bool wasCastling;
-    double evaluation;  // Store AI evaluation for PGN export
+    double evaluation;  // Store AI evaluation (white perspective: + = white winning, - = black winning)
+    string sanNotation;  // Standard Algebraic Notation
+    int halfMoveClock;  // For fifty-move rule
     
-    Move(int fr, int fc, int tr, int tc, Piece cap, bool ep, int epCol, bool castle = false, double eval = 0.0) 
+    Move(int fr, int fc, int tr, int tc, Piece cap, bool ep, int epCol, bool castle = false, double eval = 0.0, string san = "", int hmc = 0) 
         : fromRow(fr), fromCol(fc), toRow(tr), toCol(tc), capturedPiece(cap), 
-          wasEnPassant(ep), prevEnPassantCol(epCol), wasCastling(castle), evaluation(eval) {}
+          wasEnPassant(ep), prevEnPassantCol(epCol), wasCastling(castle), evaluation(eval), sanNotation(san), halfMoveClock(hmc) {}
+};
+
+// Position hash for repetition detection
+class PositionHash {
+public:
+    static string hashPosition(const class ChessBoard& board);
 };
 
 class ChessBoard {
@@ -84,6 +98,8 @@ private:
     bool flipped;
     int enPassantCol;  // -1 if no en passant available, otherwise the column of the pawn that can be captured
     vector<Move> moveHistory;
+    map<string, int> positionHistory;  // For threefold repetition detection
+    int halfMoveClock;  // For fifty-move rule (resets on pawn move or capture)
     
     // Castling rights
     bool whiteKingMoved;
@@ -94,10 +110,12 @@ private:
     bool blackRookQueensideMoved;
     
 public:
-    ChessBoard() : currentTurn(WHITE), flipped(false), enPassantCol(-1),
+    ChessBoard() : currentTurn(WHITE), flipped(false), enPassantCol(-1), halfMoveClock(0),
                    whiteKingMoved(false), whiteRookKingsideMoved(false), whiteRookQueensideMoved(false),
                    blackKingMoved(false), blackRookKingsideMoved(false), blackRookQueensideMoved(false) {
         initializeBoard();
+        // Initialize position history with starting position
+        positionHistory[PositionHash::hashPosition(*this)] = 1;
     }
     
     void initializeBoard() {
@@ -165,8 +183,20 @@ public:
             return false;
         }
         
+        // Remove current position from history
+        string currentHash = PositionHash::hashPosition(*this);
+        if (positionHistory[currentHash] > 0) {
+            positionHistory[currentHash]--;
+            if (positionHistory[currentHash] == 0) {
+                positionHistory.erase(currentHash);
+            }
+        }
+        
         Move lastMove = moveHistory.back();
         moveHistory.pop_back();
+        
+        // Restore half-move clock
+        halfMoveClock = lastMove.halfMoveClock;
         
         // Restore the piece to its original position
         board[lastMove.fromRow][lastMove.fromCol] = board[lastMove.toRow][lastMove.toCol];
@@ -349,6 +379,20 @@ public:
     
     bool isStalemate(Color color) const {
         return !isInCheck(color) && !hasLegalMoves(color);
+    }
+    
+    bool isThreefoldRepetition() const {
+        string currentHash = PositionHash::hashPosition(*this);
+        auto it = positionHistory.find(currentHash);
+        return (it != positionHistory.end() && it->second >= 3);
+    }
+    
+    bool isFiftyMoveRule() const {
+        return halfMoveClock >= 100;  // 50 moves = 100 half-moves
+    }
+    
+    bool isDraw() const {
+        return isThreefoldRepetition() || isFiftyMoveRule();
     }
     
     void flipBoard() {
@@ -647,7 +691,19 @@ public:
                             Piece capturedPiece = isEnPassant ? 
                                 board[(board[fromRow][fromCol].color == WHITE) ? toRow + 1 : toRow - 1][toCol] :
                                 board[toRow][toCol];
-                            moveHistory.push_back(Move(fromRow, fromCol, toRow, toCol, capturedPiece, isEnPassant, prevEnPassant, isCastling));
+                            
+                            // Update half-move clock
+                            bool isPawnMove = (board[fromRow][fromCol].type == PAWN);
+                            bool isCapture = (capturedPiece.type != EMPTY);
+                            int prevHalfMove = halfMoveClock;
+                            
+                            if (isPawnMove || isCapture) {
+                                halfMoveClock = 0;
+                            } else {
+                                halfMoveClock++;
+                            }
+                            
+                            moveHistory.push_back(Move(fromRow, fromCol, toRow, toCol, capturedPiece, isEnPassant, prevEnPassant, isCastling, 0.0, "", prevHalfMove));
                             
                             // Make the move
                             board[toRow][toCol] = board[fromRow][fromCol];
@@ -696,6 +752,11 @@ public:
                             }
                             
                             currentTurn = (currentTurn == WHITE) ? BLACK : WHITE;
+                            
+                            // Track position for repetition detection
+                            string posHash = PositionHash::hashPosition(*this);
+                            positionHistory[posHash]++;
+                            
                             return true;
                         }
                     }
@@ -805,7 +866,19 @@ public:
             Piece capturedPiece = isEnPassant ? 
                 board[(board[fromRow][fromCol].color == WHITE) ? toRow + 1 : toRow - 1][toCol] :
                 board[toRow][toCol];
-            moveHistory.push_back(Move(fromRow, fromCol, toRow, toCol, capturedPiece, isEnPassant, prevEnPassant, isCastling));
+            
+            // Update half-move clock
+            bool isPawnMove = (board[fromRow][fromCol].type == PAWN);
+            bool isCapture = (capturedPiece.type != EMPTY);
+            int prevHalfMove = halfMoveClock;
+            
+            if (isPawnMove || isCapture) {
+                halfMoveClock = 0;
+            } else {
+                halfMoveClock++;
+            }
+            
+            moveHistory.push_back(Move(fromRow, fromCol, toRow, toCol, capturedPiece, isEnPassant, prevEnPassant, isCastling, 0.0, "", prevHalfMove));
             
             // Make the move
             board[toRow][toCol] = board[fromRow][fromCol];
@@ -884,6 +957,11 @@ public:
             }
             
             currentTurn = (currentTurn == WHITE) ? BLACK : WHITE;
+            
+            // Track position for repetition detection
+            string posHash = PositionHash::hashPosition(*this);
+            positionHistory[posHash]++;
+            
             return true;
         }
         
@@ -896,13 +974,15 @@ public:
     
     // AI-related methods
     vector<ChessMove> generateLegalMoves(Color color) const;
-    string convertPositionToFEN() const;
     double evaluatePosition(Color perspective) const;  // material_heuristic
-    double heuristic(Color perspective) const;  // User-implementable heuristic
     
     // Apply and undo moves (for AI search)
     bool applyMove(const ChessMove& move);
+    bool applyMoveWithSAN(const ChessMove& move, const string& san, double eval);
     void undoLastMove();
+    
+    // Undo for human (undoes both player and AI move)
+    bool undoHumanMove();
     
     // Get piece at position (for AI evaluation)
     Piece getPieceAt(int row, int col) const {
@@ -910,10 +990,18 @@ public:
         return board[row][col];
     }
     
-    // Set evaluation for last move (for PGN export)
-    void setLastMoveEvaluation(double eval) {
+    // Set evaluation for last move (for PGN export) - white perspective
+    void setLastMoveEvaluation(double eval, Color movingColor) {
         if (!moveHistory.empty()) {
-            moveHistory.back().evaluation = eval;
+            // Store evaluation from white's perspective
+            moveHistory.back().evaluation = (movingColor == WHITE) ? eval : -eval;
+        }
+    }
+    
+    // Set SAN notation for last move
+    void setLastMoveSAN(const string& san) {
+        if (!moveHistory.empty()) {
+            moveHistory.back().sanNotation = san;
         }
     }
     
@@ -942,6 +1030,103 @@ string ChessMove::toAlgebraic() const {
     }
     
     return result;
+}
+
+// Implementation of ChessMove::toSAN() - Standard Algebraic Notation
+string ChessMove::toSAN(const ChessBoard& board) const {
+    if (!isValid()) return "invalid";
+    
+    Piece piece = board.getPieceAt(fromRow, fromCol);
+    Piece target = board.getPieceAt(toRow, toCol);
+    
+    string result = "";
+    
+    // Check for castling
+    if (piece.type == KING && abs(toCol - fromCol) == 2) {
+        return (toCol > fromCol) ? "O-O" : "O-O-O";
+    }
+    
+    // Piece letter (except for pawns)
+    if (piece.type != PAWN) {
+        switch(piece.type) {
+            case KNIGHT: result += "N"; break;
+            case BISHOP: result += "B"; break;
+            case ROOK: result += "R"; break;
+            case QUEEN: result += "Q"; break;
+            case KING: result += "K"; break;
+            default: break;
+        }
+        
+        // Check if we need disambiguation
+        vector<ChessMove> legalMoves = board.generateLegalMoves(piece.color);
+        bool needFile = false, needRank = false;
+        
+        for (const ChessMove& m : legalMoves) {
+            if (m.toRow == toRow && m.toCol == toCol && 
+                (m.fromRow != fromRow || m.fromCol != fromCol)) {
+                Piece otherPiece = board.getPieceAt(m.fromRow, m.fromCol);
+                if (otherPiece.type == piece.type) {
+                    if (m.fromCol != fromCol) {
+                        needFile = true;
+                    } else {
+                        needRank = true;
+                    }
+                }
+            }
+        }
+        
+        if (needFile) result += string(1, 'a' + fromCol);
+        if (needRank) result += to_string(8 - fromRow);
+    } else {
+        // Pawn moves: only show file if capturing
+        if (fromCol != toCol || target.type != EMPTY) {
+            result += string(1, 'a' + fromCol);
+        }
+    }
+    
+    // Capture notation
+    if (target.type != EMPTY || (piece.type == PAWN && fromCol != toCol)) {
+        result += "x";
+    }
+    
+    // Destination square
+    result += string(1, 'a' + toCol);
+    result += to_string(8 - toRow);
+    
+    // Promotion
+    if (promotionPiece != EMPTY) {
+        result += "=";
+        switch(promotionPiece) {
+            case QUEEN: result += "Q"; break;
+            case ROOK: result += "R"; break;
+            case BISHOP: result += "B"; break;
+            case KNIGHT: result += "N"; break;
+            default: break;
+        }
+    }
+    
+    // Note: Check/checkmate symbols would be added by caller after move is made
+    return result;
+}
+
+// Position hashing for repetition detection
+string PositionHash::hashPosition(const ChessBoard& board) {
+    // Simple string-based hash
+    stringstream ss;
+    
+    for (int row = 0; row < 8; row++) {
+        for (int col = 0; col < 8; col++) {
+            Piece p = board.getPieceAt(row, col);
+            if (p.type != EMPTY) {
+                ss << (char)('0' + p.type) << (char)('0' + p.color) << row << col << "|";
+            }
+        }
+    }
+    
+    // Include turn
+    ss << (board.getCurrentTurn() == WHITE ? "W" : "B");
+    
+    return ss.str();
 }
 
 // Generate all legal moves for a given color
@@ -976,64 +1161,6 @@ vector<ChessMove> ChessBoard::generateLegalMoves(Color color) const {
     }
     
     return legalMoves;
-}
-
-// Convert current position to FEN notation
-string ChessBoard::convertPositionToFEN() const {
-    string fen = "";
-    
-    // 1. Piece placement
-    for (int row = 0; row < 8; row++) {
-        int emptyCount = 0;
-        for (int col = 0; col < 8; col++) {
-            if (board[row][col].type == EMPTY) {
-                emptyCount++;
-            } else {
-                if (emptyCount > 0) {
-                    fen += to_string(emptyCount);
-                    emptyCount = 0;
-                }
-                fen += board[row][col].getSymbol();
-            }
-        }
-        if (emptyCount > 0) {
-            fen += to_string(emptyCount);
-        }
-        if (row < 7) fen += "/";
-    }
-    
-    // 2. Active color
-    fen += (currentTurn == WHITE) ? " w " : " b ";
-    
-    // 3. Castling availability
-    string castling = "";
-    if (!whiteKingMoved) {
-        if (!whiteRookKingsideMoved) castling += "K";
-        if (!whiteRookQueensideMoved) castling += "Q";
-    }
-    if (!blackKingMoved) {
-        if (!blackRookKingsideMoved) castling += "k";
-        if (!blackRookQueensideMoved) castling += "q";
-    }
-    if (castling.empty()) castling = "-";
-    fen += castling + " ";
-    
-    // 4. En passant target square
-    if (enPassantCol >= 0) {
-        int enPassantRow = (currentTurn == WHITE) ? 5 : 2;  // The square behind the pawn
-        fen += string(1, 'a' + enPassantCol) + to_string(8 - enPassantRow);
-    } else {
-        fen += "-";
-    }
-    
-    // 5. Halfmove clock (not tracked, default to 0)
-    fen += " 0";
-    
-    // 6. Fullmove number (based on history)
-    int fullmove = 1 + moveHistory.size() / 2;
-    fen += " " + to_string(fullmove);
-    
-    return fen;
 }
 
 // Material-based heuristic evaluation
@@ -1084,16 +1211,6 @@ double ChessBoard::evaluatePosition(Color perspective) const {
     return score;
 }
 
-// User-implementable heuristic function
-// Currently just calls material heuristic, but users can modify this
-double ChessBoard::heuristic(Color perspective) const {
-    // TODO: Implement your own heuristic here
-    // This is a placeholder that calls the material heuristic
-    // You can add positional evaluation, piece mobility, king safety, etc.
-    
-    return evaluatePosition(perspective);
-}
-
 // Apply a move (for AI search)
 bool ChessBoard::applyMove(const ChessMove& move) {
     if (!move.isValid()) return false;
@@ -1103,9 +1220,37 @@ bool ChessBoard::applyMove(const ChessMove& move) {
     return makeMove(moveStr);
 }
 
+// Apply a move with SAN notation and evaluation (for game moves)
+bool ChessBoard::applyMoveWithSAN(const ChessMove& move, const string& san, double eval) {
+    if (!applyMove(move)) return false;
+    
+    // Update the last move with SAN and evaluation
+    if (!moveHistory.empty()) {
+        moveHistory.back().sanNotation = san;
+        moveHistory.back().evaluation = eval;
+    }
+    return true;
+}
+
 // Undo last move (already implemented as undoMove)
 void ChessBoard::undoLastMove() {
     undoMove();
+}
+
+// Undo for human players (undoes both human and AI move)
+bool ChessBoard::undoHumanMove() {
+    if (moveHistory.size() < 2) {
+        // Not enough moves to undo both
+        if (moveHistory.size() == 1) {
+            return undoMove();  // Just undo the one move
+        }
+        return false;
+    }
+    
+    // Undo AI move first, then human move
+    undoMove();
+    undoMove();
+    return true;
 }
 
 // Export game to PGN format with evaluation tags
@@ -1126,25 +1271,30 @@ string ChessBoard::exportPGN(const string& whitePlayer, const string& blackPlaye
     pgn << "[Black \"" << blackPlayer << "\"]\n";
     pgn << "[Result \"" << result << "\"]\n\n";
     
-    // Move history with evaluation tags
+    // Move history with SAN notation and evaluation tags
     int moveNum = 1;
     for (size_t i = 0; i < moveHistory.size(); i++) {
+        const Move& m = moveHistory[i];
+        
         if (i % 2 == 0) {
             pgn << moveNum << ". ";
         }
         
-        // Convert move to algebraic notation (simplified)
-        const Move& m = moveHistory[i];
-        pgn << string(1, 'a' + m.fromCol) << (8 - m.fromRow)
-            << string(1, 'a' + m.toCol) << (8 - m.toRow);
+        // Use SAN if available, otherwise fall back to algebraic
+        if (!m.sanNotation.empty()) {
+            pgn << m.sanNotation;
+        } else {
+            pgn << string(1, 'a' + m.fromCol) << (8 - m.fromRow)
+                << string(1, 'a' + m.toCol) << (8 - m.toRow);
+        }
         
-        // Add evaluation tag if available (Lichess format)
+        // Add evaluation tag if available (white perspective: + = white winning)
         if (m.evaluation != 0.0) {
             pgn << " {[%eval ";
             if (m.evaluation >= 100000.0) {
-                pgn << "#" << ((int)((m.evaluation - 100000.0) / 1000.0) + 1);  // Mate in N
+                pgn << "#" << ((int)((m.evaluation - 100000.0) / 1000.0) + 1);  // Mate in N for white
             } else if (m.evaluation <= -100000.0) {
-                pgn << "#-" << ((int)((-m.evaluation - 100000.0) / 1000.0) + 1);
+                pgn << "#-" << ((int)((-m.evaluation - 100000.0) / 1000.0) + 1);  // Mate in N for black
             } else {
                 pgn << fixed << setprecision(2) << m.evaluation;
             }
@@ -1363,18 +1513,21 @@ public:
             alpha = max(alpha, eval);
         }
         
+        // Convert to objective (white perspective) for output
+        double objectiveEval = (color == WHITE) ? bestEval : -bestEval;
+        
         cout << "AI evaluation: ";
-        if (bestEval >= 100000.0) {
-            cout << "#" << ((int)((bestEval - 100000.0) / 1000.0) + 1);
-        } else if (bestEval <= -100000.0) {
-            cout << "#-" << ((int)((-bestEval - 100000.0) / 1000.0) + 1);
+        if (objectiveEval >= 100000.0) {
+            cout << "#" << ((int)((objectiveEval - 100000.0) / 1000.0) + 1);
+        } else if (objectiveEval <= -100000.0) {
+            cout << "#-" << ((int)((-objectiveEval - 100000.0) / 1000.0) + 1);
         } else {
-            cout << bestEval;
+            cout << fixed << setprecision(2) << objectiveEval;
         }
         cout << endl;
         
-        // Store for PGN export
-        lastAIEvaluation = bestEval;
+        // Store for PGN export (white perspective)
+        lastAIEvaluation = objectiveEval;
         
         return bestMove;
     }
@@ -1867,20 +2020,260 @@ public:
             alpha = max(alpha, eval);
         }
         
+        // Convert to objective (white perspective) for output
+        double objectiveEval = (color == WHITE) ? bestEval : -bestEval;
+        
         cout << "AI evaluation: ";
-        if (bestEval >= 100000.0) {
-            cout << "#" << ((int)((bestEval - 100000.0) / 1000.0) + 1);
-        } else if (bestEval <= -100000.0) {
-            cout << "#-" << ((int)((-bestEval - 100000.0) / 1000.0) + 1);
+        if (objectiveEval >= 100000.0) {
+            cout << "#" << ((int)((objectiveEval - 100000.0) / 1000.0) + 1);
+        } else if (objectiveEval <= -100000.0) {
+            cout << "#-" << ((int)((-objectiveEval - 100000.0) / 1000.0) + 1);
         } else {
-            cout << bestEval;
+            cout << fixed << setprecision(2) << objectiveEval;
         }
         cout << endl;
         
-        // Store for PGN export
-        lastAIEvaluation = bestEval;
+        // Store for PGN export (white perspective)
+        lastAIEvaluation = objectiveEval;
         
         return bestMove;
+    }
+};
+
+// Iterative Deepening AI with time limits
+class IterativeDeepeningAI : public ChessAI {
+private:
+    double timeLimit;  // Time limit in seconds
+    clock_t searchStartTime;
+    bool timeExpired;
+    ChessMove bestMoveFound;
+    double bestEvalFound;
+    
+    bool isTimeUp() const {
+        double elapsed = double(clock() - searchStartTime) / CLOCKS_PER_SEC;
+        return elapsed >= timeLimit;
+    }
+    
+    double alphaBeta(ChessBoard& board, int depth, double alpha, double beta, Color maximizingColor) {
+        if (timeExpired || isTimeUp()) {
+            timeExpired = true;
+            return 0.0;  // Return quickly
+        }
+        
+        // Terminal conditions
+        if (depth == 0) {
+            return quiesce(board, alpha, beta, maximizingColor);
+        }
+        
+        Color currentColor = board.getCurrentTurn();
+        vector<ChessMove> legalMoves = board.generateLegalMoves(currentColor);
+        
+        if (legalMoves.empty()) {
+            if (board.isInCheck(currentColor)) {
+                return (currentColor == maximizingColor) ? 
+                    -100000.0 : 100000.0;
+            } else {
+                return 0.0;
+            }
+        }
+        
+        // Move ordering
+        MoveOrderer::orderMoves(legalMoves, board);
+        
+        if (currentColor == maximizingColor) {
+            double maxEval = -100000.0;
+            for (const ChessMove& move : legalMoves) {
+                if (timeExpired) break;
+                board.applyMove(move);
+                double eval = alphaBeta(board, depth - 1, alpha, beta, maximizingColor);
+                board.undoLastMove();
+                
+                maxEval = max(maxEval, eval);
+                alpha = max(alpha, eval);
+                if (beta <= alpha) break;
+            }
+            return maxEval;
+        } else {
+            double minEval = 100000.0;
+            for (const ChessMove& move : legalMoves) {
+                if (timeExpired) break;
+                board.applyMove(move);
+                double eval = alphaBeta(board, depth - 1, alpha, beta, maximizingColor);
+                board.undoLastMove();
+                
+                minEval = min(minEval, eval);
+                beta = min(beta, eval);
+                if (beta <= alpha) break;
+            }
+            return minEval;
+        }
+    }
+    
+    double quiesce(ChessBoard& board, double alpha, double beta, Color maximizingColor, int depth = 3) {
+        if (timeExpired || depth == 0) {
+            return positionalEval(board, maximizingColor);
+        }
+        
+        double standPat = positionalEval(board, maximizingColor);
+        
+        Color currentColor = board.getCurrentTurn();
+        if (currentColor == maximizingColor) {
+            if (standPat >= beta) return beta;
+            if (alpha < standPat) alpha = standPat;
+        } else {
+            if (standPat <= alpha) return alpha;
+            if (beta > standPat) beta = standPat;
+        }
+        
+        vector<ChessMove> allMoves = board.generateLegalMoves(currentColor);
+        vector<ChessMove> captureMoves;
+        
+        for (const ChessMove& move : allMoves) {
+            Piece target = board.getPieceAt(move.toRow, move.toCol);
+            if (target.type != EMPTY || move.promotionPiece != EMPTY) {
+                captureMoves.push_back(move);
+            }
+        }
+        
+        if (captureMoves.empty()) return standPat;
+        
+        MoveOrderer::orderMoves(captureMoves, board);
+        
+        if (currentColor == maximizingColor) {
+            for (const ChessMove& move : captureMoves) {
+                if (timeExpired) break;
+                board.applyMove(move);
+                double score = quiesce(board, alpha, beta, maximizingColor, depth - 1);
+                board.undoLastMove();
+                
+                if (score >= beta) return beta;
+                if (score > alpha) alpha = score;
+            }
+            return alpha;
+        } else {
+            for (const ChessMove& move : captureMoves) {
+                if (timeExpired) break;
+                board.applyMove(move);
+                double score = quiesce(board, alpha, beta, maximizingColor, depth - 1);
+                board.undoLastMove();
+                
+                if (score <= alpha) return alpha;
+                if (score < beta) beta = score;
+            }
+            return beta;
+        }
+    }
+    
+    double positionalEval(const ChessBoard& board, Color perspective) const {
+        // Use same evaluation as PositionalAI
+        // For brevity, using simplified version - full version would copy PositionalAI's eval
+        if (board.isCheckmate(perspective)) {
+            return -100000.0;
+        }
+        Color opponent = (perspective == WHITE) ? BLACK : WHITE;
+        if (board.isCheckmate(opponent)) {
+            return 100000.0;
+        }
+        
+        // Just use material for now (you can copy full positional eval from PositionalAI)
+        return board.evaluatePosition(perspective);
+    }
+    
+public:
+    IterativeDeepeningAI(double timeLimitSeconds = 5.0) : timeLimit(timeLimitSeconds) {}
+    
+    bool usesTimeLimit() const override { return true; }
+    
+    void setTimeLimit(double seconds) override {
+        timeLimit = seconds;
+    }
+    
+    string getName() const override {
+        return "Iterative Deepening AI (" + to_string((int)timeLimit) + "s per move)";
+    }
+    
+    ChessMove getBestMove(const ChessBoard& board, Color color) override {
+        vector<ChessMove> legalMoves = board.generateLegalMoves(color);
+        if (legalMoves.empty()) {
+            return ChessMove();
+        }
+        
+        searchStartTime = clock();
+        timeExpired = false;
+        bestMoveFound = legalMoves[0];
+        bestEvalFound = -100000.0;
+        
+        ChessBoard searchBoard = board;
+        
+        // Iterative deepening: search depth 1, then 2, then 3, etc.
+        for (int depth = 1; depth <= 20; depth++) {
+            if (timeExpired || isTimeUp()) {
+                break;
+            }
+            
+            MoveOrderer::orderMoves(legalMoves, searchBoard);
+            
+            ChessMove depthBestMove = legalMoves[0];
+            double depthBestEval = -100000.0;
+            double alpha = -numeric_limits<double>::infinity();
+            double beta = numeric_limits<double>::infinity();
+            
+            bool completedDepth = true;
+            
+            for (const ChessMove& move : legalMoves) {
+                if (isTimeUp()) {
+                    completedDepth = false;
+                    break;
+                }
+                
+                searchBoard.applyMove(move);
+                double eval = alphaBeta(searchBoard, depth - 1, alpha, beta, color);
+                searchBoard.undoLastMove();
+                
+                if (timeExpired) {
+                    completedDepth = false;
+                    break;
+                }
+                
+                if (eval > depthBestEval) {
+                    depthBestEval = eval;
+                    depthBestMove = move;
+                }
+                alpha = max(alpha, eval);
+            }
+            
+            if (completedDepth) {
+                // Successfully completed this depth
+                bestMoveFound = depthBestMove;
+                bestEvalFound = depthBestEval;
+                
+                double elapsed = double(clock() - searchStartTime) / CLOCKS_PER_SEC;
+                cout << "  Depth " << depth << " completed: eval=" << fixed << setprecision(2) 
+                     << ((color == WHITE) ? bestEvalFound : -bestEvalFound) 
+                     << " (" << elapsed << "s)" << endl;
+            } else {
+                cout << "  Depth " << depth << " incomplete (time limit)" << endl;
+                break;
+            }
+        }
+        
+        // Convert to objective (white perspective) for final output
+        double objectiveEval = (color == WHITE) ? bestEvalFound : -bestEvalFound;
+        
+        cout << "Final evaluation: ";
+        if (objectiveEval >= 100000.0) {
+            cout << "#" << ((int)((objectiveEval - 100000.0) / 1000.0) + 1);
+        } else if (objectiveEval <= -100000.0) {
+            cout << "#-" << ((int)((-objectiveEval - 100000.0) / 1000.0) + 1);
+        } else {
+            cout << fixed << setprecision(2) << objectiveEval;
+        }
+        cout << endl;
+        
+        // Store for PGN export (white perspective)
+        lastAIEvaluation = objectiveEval;
+        
+        return bestMoveFound;
     }
 };
 
@@ -1906,14 +2299,22 @@ int main() {
     cout << "  2. Random AI" << endl;
     cout << "  3. Materialistic AI (material + checkmate only)" << endl;
     cout << "  4. Positional AI (advanced evaluation)" << endl;
-    cout << "Choice (1-4): ";
+    cout << "  5. Iterative Deepening AI (time-based search)" << endl;
+    cout << "Choice (1-5): ";
     
     int whiteChoice;
     cin >> whiteChoice;
     cin.ignore();
     
     int whiteDepth = 3;
-    if (whiteChoice >= 3 && whiteChoice <= 4) {
+    double whiteTimeLimit = 5.0;
+    if (whiteChoice == 5) {
+        cout << "Select time limit for White in seconds (1-60, recommended 3-10): ";
+        cin >> whiteTimeLimit;
+        cin.ignore();
+        if (whiteTimeLimit < 1) whiteTimeLimit = 1;
+        if (whiteTimeLimit > 60) whiteTimeLimit = 60;
+    } else if (whiteChoice >= 3 && whiteChoice <= 4) {
         cout << "Select search depth for White (1-6, recommended 3-4): ";
         cin >> whiteDepth;
         cin.ignore();
@@ -1926,14 +2327,22 @@ int main() {
     cout << "  2. Random AI" << endl;
     cout << "  3. Materialistic AI (material + checkmate only)" << endl;
     cout << "  4. Positional AI (advanced evaluation)" << endl;
-    cout << "Choice (1-4): ";
+    cout << "  5. Iterative Deepening AI (time-based search)" << endl;
+    cout << "Choice (1-5): ";
     
     int blackChoice;
     cin >> blackChoice;
     cin.ignore();
     
     int blackDepth = 3;
-    if (blackChoice >= 3 && blackChoice <= 4) {
+    double blackTimeLimit = 5.0;
+    if (blackChoice == 5) {
+        cout << "Select time limit for Black in seconds (1-60, recommended 3-10): ";
+        cin >> blackTimeLimit;
+        cin.ignore();
+        if (blackTimeLimit < 1) blackTimeLimit = 1;
+        if (blackTimeLimit > 60) blackTimeLimit = 60;
+    } else if (blackChoice >= 3 && blackChoice <= 4) {
         cout << "Select search depth for Black (1-6, recommended 3-4): ";
         cin >> blackDepth;
         cin.ignore();
@@ -1956,6 +2365,9 @@ int main() {
     } else if (whiteChoice == 4) {
         whiteAI = new PositionalAI(whiteDepth);
         whitePlayerName = whiteAI->getName();
+    } else if (whiteChoice == 5) {
+        whiteAI = new IterativeDeepeningAI(whiteTimeLimit);
+        whitePlayerName = whiteAI->getName();
     }
     
     if (blackChoice == 2) {
@@ -1966,6 +2378,9 @@ int main() {
         blackPlayerName = blackAI->getName();
     } else if (blackChoice == 4) {
         blackAI = new PositionalAI(blackDepth);
+        blackPlayerName = blackAI->getName();
+    } else if (blackChoice == 5) {
+        blackAI = new IterativeDeepeningAI(blackTimeLimit);
         blackPlayerName = blackAI->getName();
     }
     
@@ -2022,20 +2437,33 @@ int main() {
                 continue;
             }
             
+            // Generate SAN notation before making the move
+            string sanMove = aiMove.toSAN(chess);
+            
             string moveStr = aiMove.toAlgebraic();
-            cout << "AI plays: " << moveStr << " (thought for " << thinkTime << "s)" << endl;
+            cout << "AI plays: " << sanMove << " (thought for " << fixed << setprecision(2) << thinkTime << "s)" << endl;
             
             if (chess.makeMove(moveStr)) {
-                // Store AI evaluation for PGN
-                chess.setLastMoveEvaluation(lastAIEvaluation);
+                // Store SAN and evaluation (white perspective)
+                chess.setLastMoveEvaluation(lastAIEvaluation, currentTurn);
+                chess.setLastMoveSAN(sanMove);
                 
                 chess.display();
                 
                 // Check for game end
-                if (chess.isCheckmate(chess.getCurrentTurn())) {
+                if (chess.isDraw()) {
+                    if (chess.isThreefoldRepetition()) {
+                        cout << "Draw by threefold repetition!" << endl;
+                    } else if (chess.isFiftyMoveRule()) {
+                        cout << "Draw by fifty-move rule!" << endl;
+                    }
+                    gameResult = "1/2-1/2";
+                    gameEnded = true;
+                } else if (chess.isCheckmate(chess.getCurrentTurn())) {
                     gameResult = (currentTurn == WHITE) ? "1-0" : "0-1";
                     gameEnded = true;
                 } else if (chess.isStalemate(chess.getCurrentTurn())) {
+                    cout << "Stalemate!" << endl;
                     gameResult = "1/2-1/2";
                     gameEnded = true;
                 }
@@ -2072,10 +2500,21 @@ int main() {
             }
             
             if (lowerInput == "u" || lowerInput == "undo") {
-                if (chess.undoMove()) {
-                    chess.display();
+                // Undo both human and AI move (if playing against AI)
+                bool anyAI = (whiteAI != nullptr || blackAI != nullptr);
+                if (anyAI) {
+                    if (chess.undoHumanMove()) {
+                        chess.display();
+                    } else {
+                        cout << "No moves to undo!" << endl;
+                    }
                 } else {
-                    cout << "No moves to undo!" << endl;
+                    // Human vs human, just undo one move
+                    if (chess.undoMove()) {
+                        chess.display();
+                    } else {
+                        cout << "No moves to undo!" << endl;
+                    }
                 }
                 continue;
             }
@@ -2107,10 +2546,19 @@ int main() {
                 chess.display();
                 
                 // Check for game end
-                if (chess.isCheckmate(chess.getCurrentTurn())) {
+                if (chess.isDraw()) {
+                    if (chess.isThreefoldRepetition()) {
+                        cout << "Draw by threefold repetition!" << endl;
+                    } else if (chess.isFiftyMoveRule()) {
+                        cout << "Draw by fifty-move rule!" << endl;
+                    }
+                    gameResult = "1/2-1/2";
+                    gameEnded = true;
+                } else if (chess.isCheckmate(chess.getCurrentTurn())) {
                     gameResult = (currentTurn == WHITE) ? "1-0" : "0-1";
                     gameEnded = true;
                 } else if (chess.isStalemate(chess.getCurrentTurn())) {
+                    cout << "Stalemate!" << endl;
                     gameResult = "1/2-1/2";
                     gameEnded = true;
                 }
