@@ -13,6 +13,7 @@ A fully interactive command-line chess game written in C++.
 - **Check, checkmate, and stalemate detection**
 - **Threefold repetition detection** - automatic draw detection
 - **Fifty-move rule detection** - automatic draw detection
+- **Insufficient material detection** - draws for K vs K, K+minor vs K, etc.
 - Prevents illegal moves that would leave king in check
 - **Move history with undo** - take back moves with `u` or `undo`
 - Pawn promotion to any piece (Queen, Rook, Bishop, Knight)
@@ -20,7 +21,7 @@ A fully interactive command-line chess game written in C++.
 - Flip the board view with `f` or `flip` command
 - Turn-based gameplay (White moves first)
 - **AI Opponents** - Play against computer or watch AI vs AI
-- **PGN Export** - Save games in standard PGN format with move evaluations
+- **PGN Export** - Save games in standard PGN format with move evaluations (saved to `games/` folder)
 - **Time Controls** - Iterative deepening AI with configurable time limits
 
 ## Compilation
@@ -55,53 +56,45 @@ When you run the program, you'll be prompted to select players for both White an
 Select White Player:
   1. Human
   2. Random AI
-  3. Alpha-Beta AI (depth 3)
-Choice (1-3):
+  3. Material AI (time-based, simple evaluation)
+  4. Positional AI (time-based, advanced evaluation)
+Choice (1-4):
 ```
 
 **Player Types:**
 - **Human**: You enter moves manually
 - **Random AI**: Picks random legal moves (good for testing)
-- **Materialistic AI**: Uses material evaluation only with alpha-beta pruning
+- **Material AI**: Time-based with simple material evaluation
   - Fast and aggressive
-  - Only considers piece values and checkmate
+  - Only considers piece values and basic tactics
+  - Evaluations shown as integers (1.00, 3.00, -5.00)
   - Good baseline for comparison
-- **Positional AI**: Advanced evaluation with multiple factors
+- **Positional AI**: Time-based with advanced evaluation
   - Piece-square tables for positional play
   - Pawn structure analysis (doubled, isolated, passed pawns)
   - Rook on open file bonuses
   - King safety evaluation
   - Mobility bonus
   - Center control
-  - Quiescence search to avoid horizon effect
+  - Opening principles (development, knight safety)
+  - Evaluations shown with decimals (1.35, -2.47, 0.63)
   - Significantly stronger but slower
-- **Iterative Deepening AI**: Time-based search with progressive deepening
-  - Searches depth 1, then 2, then 3, until time runs out
-  - Uses time limits instead of fixed depth (1-60 seconds)
-  - **Recommended for realistic play** - adapts to position complexity
-  - Automatic depth adjustment based on available time
-  - Shows progress as it searches deeper
 
-**Search Configuration:**
+**Time Limit Selection:**
 
-For **Materialistic** and **Positional** AI, choose search depth (1-6):
-- **Depth 1**: Instant (<0.1s) - Only looks at immediate moves
-- **Depth 2**: Very fast (<0.5s) - Looks 2 moves ahead
-- **Depth 3**: Fast (1-3s) - **Recommended for most games**
-- **Depth 4**: Moderate (5-15s) - Stronger play, noticeable wait
-- **Depth 5**: Slow (30-90s) - Very strong, long thinking time
-- **Depth 6**: Very slow (2-10min) - Expert level, patience required
+After selecting an AI player, choose time limit (1-60 seconds per move):
+- **1-3 seconds**: Fast, casual play - reaches depth 3-4
+- **5-10 seconds**: **Recommended** - balanced speed and strength, reaches depth 4-6
+- **15-30 seconds**: Strong tactical play - reaches depth 6-8
+- **30-60 seconds**: Expert-level analysis - reaches depth 8-10
 
-For **Iterative Deepening** AI, choose time limit (1-60 seconds):
-- **1-3 seconds**: Fast, casual play
-- **5-10 seconds**: **Recommended** - balanced speed and strength
-- **15-30 seconds**: Strong tactical play
-- **30-60 seconds**: Expert-level analysis
-
-**Note on Performance:**
-- Fixed depth: Consistent time per move, depth varies by position
-- Time limit: Consistent thinking time, depth varies (typically 4-7)
-- Time-based search is more realistic for tournament-style play
+**Note on Time-Based Search:**
+- Uses iterative deepening: searches depth 1, then 2, then 3... until time runs out
+- Always has a valid move (from last completed depth)
+- Adapts to position complexity automatically
+- Simple positions search deeper with remaining time
+- Complex positions still get reasonable depth
+- More realistic for tournament-style play than fixed depth
 
 You can play:
 - Human vs Human
@@ -110,7 +103,7 @@ You can play:
 
 ### Commands
 
-- `save` - Save the game as PGN (creates `chess_YYYYMMDD_HHMMSS.pgn`)
+- `save` - Save the game as PGN (creates `games/chess_YYYYMMDD_HHMMSS.pgn`)
 - `f` or `flip` - Flip the board view
 - `u` or `undo` - Undo last move
 - `q` or `quit` - Exit game
@@ -270,74 +263,76 @@ Both AIs use intelligent move ordering for better alpha-beta pruning:
 
 This typically reduces nodes searched by 50-90%, making deeper searches feasible.
 
-### Key AI Methods
+### AI Architecture
+
+The chess engine includes three AI types:
+
+**1. Random AI**
+- Picks random legal moves
+- Useful for testing and debugging
+- No evaluation or search
+
+**2. Material AI (Time-based)**
+- Uses iterative deepening with time limits
+- Simple material evaluation: P=1, N=3, B=3, R=5, Q=9
+- Fast, aggressive play
+- Returns integer evaluations (1.00, 3.00, etc.)
+
+**3. Positional AI (Time-based)**
+- Uses iterative deepening with time limits
+- Advanced evaluation with:
+  - Piece-square tables for positional play
+  - Pawn structure analysis (doubled, isolated, passed pawns)
+  - Rook on open/semi-open files
+  - King safety (pawn shield)
+  - Piece mobility
+  - Center control
+  - Knight safety (escape squares)
+  - Opening principles (development, early queen penalty)
+- Significantly stronger but slower
+- Returns decimal evaluations (1.35, -2.47, etc.)
+
+**AI Output Format:**
+```
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. e5 (1.90)
+  2. Nf6 (1.35)
+  3. d5 (0.85)
+AI plays: e5 (thought for 5.00s)
+```
+
+The AI shows:
+- **Final depth reached** - How deep the search went
+- **Top 3 alternatives** - Best moves considered with evaluations
+- **Mate scores** - Shows #3 for mate in 3, #-5 for getting mated in 5
+- **Time spent** - Actual thinking time
+
+**All AI players use:**
+- Iterative deepening (searches depth 1, 2, 3... until time runs out)
+- Alpha-beta pruning for efficient search
+- Quiescence search (Positional AI only)
+- Move ordering for better pruning
+- Proper mate distance calculation
+
+### Key Methods
 
 **`generateLegalMoves(Color color)`**
 - Returns vector of all legal moves for the given color
 - Handles all special moves (castling, en passant, promotion)
 - Only includes moves that don't leave king in check
 
-**`convertPositionToFEN()`**
-- Converts current board position to FEN (Forsyth-Edwards Notation)
-- Useful for debugging and position analysis
-- Format: `rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`
-
-**`evaluatePosition(Color perspective)`** (material_heuristic)
-- Basic material evaluation function
-- Piece values: Pawn=1, Knight/Bishop=3, Rook=5, Queen=9
-- Returns +∞ for checkmate in your favor, -∞ for checkmate against you
-- Good baseline for testing AI algorithms
-
-**`heuristic(Color perspective)`**
-- User-implementable evaluation function
-- Currently calls `evaluatePosition()` but you can customize it
-- Add your own:
-  - Positional evaluation
-  - Piece mobility
-  - King safety
-  - Pawn structure
-  - Center control
+**`evaluatePosition(Color perspective)`**
+- Material evaluation function used by board class
+- Piece values: Pawn=1, Knight=3, Bishop=3.2, Rook=5, Queen=9
+- Returns finite values for checkmate positions
+- Good baseline for material counting
 
 **`applyMove(ChessMove move)` / `undoLastMove()`**
 - Apply and undo moves for search tree exploration
 - Used by alpha-beta algorithm to try different move sequences
-
-### Implementing Your Own AI
-
-To create a custom AI, inherit from the `ChessAI` class:
-
-```cpp
-class MyCustomAI : public ChessAI {
-public:
-    string getName() const override {
-        return "My Custom AI";
-    }
-    
-    ChessMove getBestMove(const ChessBoard& board, Color color) override {
-        // Your AI logic here
-        vector<ChessMove> legalMoves = board.generateLegalMoves(color);
-        
-        // Example: Pick move with best heuristic value
-        ChessMove bestMove;
-        double bestScore = -numeric_limits<double>::infinity();
-        
-        for (const ChessMove& move : legalMoves) {
-            ChessBoard tempBoard = board;
-            tempBoard.applyMove(move);
-            double score = tempBoard.heuristic(color);
-            
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = move;
-            }
-        }
-        
-        return bestMove;
-    }
-};
-```
-
-Then add it to the main menu in `main()`.
+- Essential for minimax search
 
 ### Alpha-Beta Pruning Implementation
 
@@ -403,7 +398,8 @@ Potential improvements to explore:
 ### Already Implemented ✅
 - ✅ Threefold repetition detection
 - ✅ Fifty-move rule detection
-- ✅ PGN export with evaluations
+- ✅ Insufficient material detection (K vs K, K+minor vs K, etc.)
+- ✅ PGN export with evaluations (saved to `games/` folder)
 - ✅ Standard Algebraic Notation (SAN)
 - ✅ Time controls (iterative deepening with time limits)
 - ✅ AI opponents (4 different strength levels)
@@ -411,6 +407,35 @@ Potential improvements to explore:
 - ✅ Quiescence search
 - ✅ Alpha-beta pruning
 - ✅ Positional evaluation
+- ✅ Pawn promotion in AI search (fixed - AI now sees promotions coming)
+- ✅ Correct mate distance calculation (#-3, #-2, #-1)
+- ✅ Clean AI output (shows top 3 moves and final depth)
 
-See CHANGES.md for complete development history and debugging guide.
+## Recent Improvements
+
+### Critical Bug Fixes (Latest Session)
+
+**Promotion Bug Fixed** 🎉
+- **Issue**: AI couldn't see pawn promotions in its search tree
+- **Impact**: AI would sacrifice pawns on 7th rank, thinking they were worth only 1 point instead of 9
+- **Root Cause**: `makeMove()` function ignored promotion character ('q', 'r', 'b', 'n')
+- **Fix**: Now properly promotes pawns to queens/rooks/bishops/knights
+- **Result**: AI now correctly evaluates promotion moves and plays endgames properly
+
+**Mate Distance Calculation**
+- **Issue**: All mates showed as #-1 regardless of actual distance
+- **Fix**: Proper ply tracking from root position
+- **Result**: Now correctly shows #-3, #-2, #-1 as game progresses
+
+**Display Improvements**
+- **Old**: Spammed depth progress (Depth 1...2...3...4...5)
+- **New**: Shows final depth and top 3 moves with evaluations
+- **Benefit**: Cleaner output, see what alternatives AI considered
+
+**Other Fixes**
+- Games now save to `games/` folder (auto-created)
+- Insufficient material detection added
+- Consistent naming: RandomAI, MaterialAI, PositionalAI
+
+See DOCUMENTATION.md for complete code documentation and FINAL_SESSION_SUMMARY.md for detailed fix descriptions.
 
