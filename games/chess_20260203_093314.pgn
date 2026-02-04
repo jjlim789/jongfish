@@ -1,0 +1,9 @@
+[Event "Casual Game"]
+[Site "CLI Chess"]
+[Date "2026.02.03"]
+[Round "1"]
+[White "Human"]
+[Black "Positional AI (5s per move)"]
+[Result "1-0"]
+
+1. e4 e5 {[%eval -1.90]} 2. Nf3 Nc6 {[%eval 2.65]} 3. Bb5 a6 {[%eval 2.90]} 4. Ba4 b5 {[%eval 3.75]} 5. Bb3 Nf6 {[%eval 2.95]} 6. d3 d5 {[%eval 3.95]} 7. exd5 Na5 {[%eval 3.85]} 8. 0-0 Nxb3 {[%eval 5.05]} 9. axb3 Qxd5 {[%eval 3.35]} 10. Nc3 Qb7 {[%eval 2.55]} 11. Nxe5 Bb4 {[%eval 2.90]} 12. Qf3 Qxf3 {[%eval 3.15]} 13. Nxf3 Bb7 {[%eval -1.20]} 14. Re1 Kf8 {[%eval -1.00]} 15. Bg5 Bxf3 {[%eval 0.30]} 16. gxf3 h6 {[%eval -0.50]} 17. Bxf6 gxf6 {[%eval 1.45]} 18. Re4 Bxc3 {[%eval 1.85]} 19. bxc3 f5 {[%eval -1.95]} 20. Re5 Re8 {[%eval -2.70]} 21. Rxe8 Kxe8 {[%eval -3.55]} 22. Rxa6 Rg8 {[%eval -3.55]} 23. Kf1 Rg6 {[%eval -3.85]} 24. Rxg6 fxg6 {[%eval 0.15]} 25. f4 Kd7 {[%eval -1.75]} 26. Ke2 Kc6 {[%eval -1.55]} 27. Ke3 Kd6 {[%eval -1.50]} 28. Kd4 c5 {[%eval -1.65]} 29. Ke3 Kd5 {[%eval -1.90]} 30. c4 bxc4 {[%eval -2.40]} 31. dxc4 Kc6 {[%eval -1.35]} 32. c3 Kb7 {[%eval -1.35]} 33. b4 Kb6 {[%eval -2.30]} 34. h4 Kc6 {[%eval -1.40]} 35. f3 Kb6 {[%eval -1.10]} 36. bxc5 Kxc5 {[%eval 1.05]} 37. Kd3 h5 {[%eval 0.95]} 38. Kd2 Kxc4 {[%eval 0.75]} 39. Kc2 Kc5 {[%eval 0.75]} 40. Kd3 Kd5 {[%eval -0.65]} 41. c4 Kc6 {[%eval -0.65]} 42. Kd4 Kd6 {[%eval 0.40]} 43. c5 Ke6 {[%eval 0.35]} 44. c6 Kd6 {[%eval 0.10]} 45. c7 Kd7 {[%eval 0.35]} 46. Ke5 Ke7 {[%eval 0.35]} 47. c8 Kf7 {[%eval -99400.00]} 48. Qc7 Ke8 {[%eval -99600.00]} 49. Kf6 Kf8 {[%eval -99800.00]} 50. Qf7 1-0

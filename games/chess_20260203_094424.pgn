@@ -1,0 +1,9 @@
+[Event "Casual Game"]
+[Site "CLI Chess"]
+[Date "2026.02.03"]
+[Round "1"]
+[White "Random AI"]
+[Black "Positional AI (5s per move)"]
+[Result "0-1"]
+
+1. Na3 e5 {[%eval -1.05]} 2. f4 {[%eval 1.05]} Bxa3 {[%eval 0.80]} 3. bxa3 {[%eval -0.80]} e4 {[%eval 1.00]} 4. Nh3 {[%eval -1.00]} Nc6 {[%eval 0.60]} 5. Ng1 {[%eval -0.60]} d5 {[%eval 7.00]} 6. Nf3 {[%eval -7.00]} exf3 {[%eval 4.10]} 7. e4 {[%eval -4.10]} dxe4 {[%eval 5.60]} 8. h4 {[%eval -5.60]} Bg4 {[%eval 11.10]} 9. g3 {[%eval -11.10]} f2 {[%eval 17.80]} 10. Kxf2 {[%eval -17.80]} Bxd1 {[%eval 13.80]} 11. Bc4 {[%eval -13.80]} Qd4 {[%eval 15.60]} 12. Kg2 {[%eval -15.60]} Bf3 {[%eval 21.60]} 13. Kh3 {[%eval -21.60]} Qxa1 {[%eval 19.40]} 14. Bb3 {[%eval -19.40]} Bxh1 {[%eval 23.75]} 15. Ba4 {[%eval -23.75]} Ne7 {[%eval 28.70]} 16. d4 {[%eval -28.70]} Qxc1 {[%eval 27.25]} 17. Kg4 {[%eval -27.25]} f5 {[%eval #1]} 18. Kg5 {[%eval #-1]} Qxc2 {[%eval #1]} 19. d5 {[%eval #-1]} Qxa4 {[%eval #1]} 20. d6 {[%eval #-1]} cxd6 {[%eval #1]} 21. h5 {[%eval #-1]} Qxa3 {[%eval #1]} 22. h6 {[%eval #-1]} Qxg3 {[%eval #1]} 23. Kh5 {[%eval #-1]} gxh6 {[%eval #1]} 24. a4 {[%eval #-1]} Qxf4 {[%eval #1]} 25. a5 {[%eval #-1]} Ne5 {[%eval #1]} 26. a6 {[%eval #-1]} d5 {[%eval #1]} 27. axb7 {[%eval #-1]} Qg5 {[%eval 99900.00]} 0-1

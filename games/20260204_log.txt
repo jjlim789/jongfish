@@ -1,0 +1,546 @@
+Microsoft Windows [Version 10.0.22631.6199]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\jongj\PycharmProjects\jongfish>g++ chess.cpp
+
+C:\Users\jongj\PycharmProjects\jongfish>g++ chess.cpp -o chess
+
+C:\Users\jongj\PycharmProjects\jongfish>chess
+=== Chess Game ===
+
+Select White Player:
+  1. Human
+  2. Random AI
+  3. Material AI (time-based, simple evaluation)
+  4. Positional AI (time-based, advanced evaluation)
+Choice (1-4): 2
+
+Select Black Player:
+  1. Human
+  2. Random AI
+  3. Material AI (time-based, simple evaluation)
+  4. Positional AI (time-based, advanced evaluation)
+Choice (1-4): 4
+Select time limit for Black in seconds (1-60, recommended 3-10): 5
+
+=== Game Start ===
+White: Random AI
+Black: Positional AI (5s per move)
+
+** Thinking Time Scaling **
+Approximate time increases per depth level:
+  Depth 1: <0.1s  (instant)
+  Depth 2: <0.5s  (very fast)
+  Depth 3: 1-3s   (fast)
+  Depth 4: 5-15s  (moderate)
+  Depth 5: 30-90s (slow)
+  Depth 6: 2-10min (very slow)
+Note: Times vary based on position complexity and move ordering.
+
+
+Commands:
+  Enter moves in algebraic notation (e.g., e4, Nf3, O-O)
+  'f' or 'flip' - Flip board
+  'u' or 'undo' - Undo last move
+  'save' - Save game as PGN
+  'q' or 'quit' - Exit game
+
+8 r n b q k b n r
+7 p p p p p p p p
+6 . . . . . . . .
+5 . . . . . . . .
+4 . . . . . . . .
+3 . . . . . . . .
+2 P P P P P P P P
+1 R N B Q K B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: d3 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p p p p p
+6 . . . . . . . .
+5 . . . . . . . .
+4 . . . . . . . .
+3 . . . P . . . .
+2 P P P . P P P P
+1 R N B Q K B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+AI plays: e5 (thought for 5.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . . . .
+3 . . . P . . . .
+2 P P P . P P P P
+1 R N B Q K B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: g4 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . . P .
+3 . . . P . . . .
+2 P P P . P P . P
+1 R N B Q K B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Ke7 (-21.55)
+  2. Ne7 (-4.45)
+AI plays: Be7 (thought for 5.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . . P .
+3 . . . P . . . .
+2 P P P . P P . P
+1 R N B Q K B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: f4 (thought for 0.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . P P .
+3 . . . P . . . .
+2 P P P . P . . P
+1 R N B Q K B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+AI plays: Bf8 (thought for 5.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . P P .
+3 . . . P . . . .
+2 P P P . P . . P
+1 R N B Q K B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: h3 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . P P .
+3 . . . P . . . P
+2 P P P . P . . .
+1 R N B Q K B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Qe7 (2.25)
+AI plays: Be7 (thought for 5.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . P P .
+3 . . . P . . . P
+2 P P P . P . . .
+1 R N B Q K B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: Kf2 (thought for 0.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . P P .
+3 . . . P . . . P
+2 P P P . P K . .
+1 R N B Q . B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Bf8 (-6.25)
+AI plays: Bf8 (thought for 5.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . p . . .
+4 . . . . . P P .
+3 . . . P . . . P
+2 P P P . P K . .
+1 R N B Q . B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: fxe5 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . . .
+4 . . . . . . P .
+3 . . . P . . . P
+2 P P P . P K . .
+1 R N B Q . B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+AI plays: Be7 (thought for 5.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . P . . .
+4 . . . . . . P .
+3 . . . P . . . P
+2 P P P . P K . .
+1 R N B Q . B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: Nd2 (thought for 0.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . P . . .
+4 . . . . . . P .
+3 . . . P . . . P
+2 P P P N P K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+AI plays: Bf8 (thought for 5.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . . .
+4 . . . . . . P .
+3 . . . P . . . P
+2 P P P N P K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: Ndf3 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . . .
+4 . . . . . . P .
+3 . . . P . N . P
+2 P P P . P K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+AI plays: Ne7 (thought for 5.00s)
+
+8 r n b q k b . r
+7 p p p p n p p p
+6 . . . . . . . .
+5 . . . . P . . .
+4 . . . . . . P .
+3 . . . P . N . P
+2 P P P . P K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: Ng5 (thought for 0.00s)
+
+8 r n b q k b . r
+7 p p p p n p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . . . . P .
+3 . . . P . . . P
+2 P P P . P K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Rg8 (-24.30)
+  2. Nd5 (-24.30)
+  3. d5 (-24.30)
+AI plays: Ng8 (thought for 5.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . . . . P .
+3 . . . P . . . P
+2 P P P . P K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: e3 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . . . . P .
+3 . . . P P . . P
+2 P P P . . K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Be7 (-21.25)
+  2. Ne7 (-4.15)
+AI plays: Be7 (thought for 5.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . . . . P .
+3 . . . P P . . P
+2 P P P . . K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: d4 (thought for 0.00s)
+
+8 r n b q k . n r
+7 p p p p b p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . P . . P .
+3 . . . . P . . P
+2 P P P . . K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Kf8 (-21.25)
+  2. Bf8 (-4.15)
+AI plays: Bf8 (thought for 5.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . P . . P .
+3 . . . . P . . P
+2 P P P . . K . .
+1 R . B Q . B N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: Bd3 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . P . . P .
+3 . . . B P . . P
+2 P P P . . K . .
+1 R . B Q . . N R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Be7 (-4.15)
+AI plays: Ne7 (thought for 5.00s)
+
+8 r n b q k b . r
+7 p p p p n p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . P . . P .
+3 . . . B P . . P
+2 P P P . . K . .
+1 R . B Q . . N R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: Ne2 (thought for 0.00s)
+
+8 r n b q k b . r
+7 p p p p n p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . P . . P .
+3 . . . B P . . P
+2 P P P . N K . .
+1 R . B Q . . . R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Nd5 (-24.30)
+  2. Rg8 (-21.25)
+  3. Ng8 (-8.00)
+AI plays: Ng8 (thought for 5.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . . . . .
+5 . . . . P . N .
+4 . . . P . . P .
+3 . . . B P . . P
+2 P P P . N K . .
+1 R . B Q . . . R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: e6 (thought for 0.00s)
+
+8 r n b q k b n r
+7 p p p p . p p p
+6 . . . . P . . .
+5 . . . . . . N .
+4 . . . P . . P .
+3 . . . B P . . P
+2 P P P . N K . .
+1 R . B Q . . . R
+  a b c d e f g h
+
+Black to move
+
+Positional AI (5s per move) is thinking...
+Searched to depth 5
+Top moves:
+  1. Ne7 (-21.25)
+  2. Be7 (-8.00)
+AI plays: Ne7 (thought for 5.00s)
+
+8 r n b q k b . r
+7 p p p p n p p p
+6 . . . . P . . .
+5 . . . . . . N .
+4 . . . P . . P .
+3 . . . B P . . P
+2 P P P . N K . .
+1 R . B Q . . . R
+  a b c d e f g h
+
+White to move
+
+Random AI is thinking...
+AI plays: exf7 (thought for 0.00s)
+
+8 r n b q k b . r
+7 p p p p n P p p
+6 . . . . . . . .
+5 . . . . . . N .
+4 . . . P . . P .
+3 . . . B P . . P
+2 P P P . N K . .
+1 R . B Q . . . R
+  a b c d e f g h
+
+Black to move - CHECKMATE! White wins!
+
+Game Over! Result: 1-0
+Save game? (y/n): y
+A subdirectory or file games already exists.
+Error occurred while processing: games.
+Game saved to: games/chess_20260204_221900.pgn
+
+C:\Users\jongj\PycharmProjects\jongfish>
