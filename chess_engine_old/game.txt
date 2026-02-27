@@ -1,0 +1,1593 @@
+
++--------------------------------------+
+|      C++ Chess Engine  v1.0          |
+|   Vibe-coded with AI assistance      |
++--------------------------------------+
+
+Select mode:
+  1. Human vs AI
+  2. Bot vs Bot
+Choice: 1
+Play as (w)hite or (b)lack? w
+AI thinking time per move (seconds, default 3): 3
+
+Commands: 'undo', 'eval', 'savepgn <file>', 'perft <depth>', 'quit'
+
+
+  a b c d e f g h
+8 r n b q k b n r 8
+7 p p p p p p p p 7
+6 . . . . . . . . 6
+5 . . . . . . . . 5
+4 . . . . . . . . 4
+3 . . . . . . . . 3
+2 P P P P P P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Your move: e4
+
+  a b c d e f g h
+8 r n b q k b n r 8
+7 p p p p p p p p 7
+6 . . . . . . . . 6
+5 . . . . . . . . 5
+4 . . . . P . . . 4
+3 . . . . . . . . 3
+2 P P P P . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+Black to move | EP: e3 | Castling: KQkq
+
+Moves: 1. e4
+
+Black AI thinking for 3s...
+Best move: Nf6 (nodes: 2164428, depth: 9, eval: +1, time: 3s)
+
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . n . . 6
+5 . . . . . . . . 5
+4 . . . . P . . . 4
+3 . . . . . . . . 3
+2 P P P P . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6
+
+Your move: e5
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . n . . 6
+5 . . . . P . . . 5
+4 . . . . . . . . 4
+3 . . . . . . . . 3
+2 P P P P . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+Black to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5
+
+Black AI thinking for 3s...
+Best move: Nd5 (nodes: 1990276, depth: 9, eval: -30, time: 3s)
+
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . . . 6
+5 . . . n P . . . 5
+4 . . . . . . . . 4
+3 . . . . . . . . 3
+2 P P P P . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5
+
+Your move: c4
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . . . 6
+5 . . . n P . . . 5
+4 . . P . . . . . 4
+3 . . . . . . . . 3
+2 P P . P . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+Black to move | EP: c3 | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4
+
+Black AI thinking for 3s...
+Best move: Nf4 (nodes: 1983443, depth: 9, eval: -63, time: 3s)
+
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . . . 6
+5 . . . . P . . . 5
+4 . . P . . n . . 4
+3 . . . . . . . . 3
+2 P P . P . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4
+
+Your move: d4
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . . . 6
+5 . . . . P . . . 5
+4 . . P P . n . . 4
+3 . . . . . . . . 3
+2 P P . . . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+Black to move | EP: d3 | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4
+
+Black AI thinking for 3s...
+Best move: Ng6 (nodes: 1907404, depth: 9, eval: -54, time: 3s)
+
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . . 4
+3 . . . . . . . . 3
+2 P P . . . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6
+
+Your move: Nc3
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . . 4
+3 . . N . . . . . 3
+2 P P . . . P P P 2
+1 R . B Q K B N R 1
+  a b c d e f g h
+Black to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. Nc3
+
+Black AI thinking for 3s...
+Best move: c5 (nodes: 2011390, depth: 9, eval: -81, time: 3s)
+
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p . p p p p p 7
+6 . . . . . . n . 6
+5 . . p . P . . . 5
+4 . . P P . . . . 4
+3 . . N . . . . . 3
+2 P P . . . P P P 2
+1 R . B Q K B N R 1
+  a b c d e f g h
+White to move | EP: c6 | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. Nc3 c5
+
+Your move: undo
+Move(s) undone.
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . . 4
+3 . . . . . . . . 3
+2 P P . . . P P P 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6
+
+Your move: h4
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p p p p p 7
+6 . . . . . . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . P 4
+3 . . . . . . . . 3
+2 P P . . . P P . 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+Black to move | EP: h3 | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4
+
+Black AI thinking for 3s...
+Best move: e6 (nodes: 1884568, depth: 9, eval: -117, time: 3s)
+
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p . p p p 7
+6 . . . . p . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . P 4
+3 . . . . . . . . 3
+2 P P . . . P P . 2
+1 R N B Q K B N R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6
+
+Your move: Nf3
+
+  a b c d e f g h
+8 r n b q k b . r 8
+7 p p p p . p p p 7
+6 . . . . p . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . P 4
+3 . . . . . N . . 3
+2 P P . . . P P . 2
+1 R N B Q K B . R 1
+  a b c d e f g h
+Black to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3
+
+Black AI thinking for 3s...
+Best move: Nc6 (nodes: 1990250, depth: 9, eval: -90, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k b . r 8
+7 p p p p . p p p 7
+6 . . n . p . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . P 4
+3 . . . . . N . . 3
+2 P P . . . P P . 2
+1 R N B Q K B . R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6
+
+Your move: Nc3
+
+  a b c d e f g h
+8 r . b q k b . r 8
+7 p p p p . p p p 7
+6 . . n . p . n . 6
+5 . . . . P . . . 5
+4 . . P P . . . P 4
+3 . . N . . N . . 3
+2 P P . . . P P . 2
+1 R . B Q K B . R 1
+  a b c d e f g h
+Black to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3
+
+Black AI thinking for 3s...
+Best move: Bb4 (nodes: 1749322, depth: 8, eval: -99, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . . r 8
+7 p p p p . p p p 7
+6 . . n . p . n . 6
+5 . . . . P . . . 5
+4 . b P P . . . P 4
+3 . . N . . N . . 3
+2 P P . . . P P . 2
+1 R . B Q K B . R 1
+  a b c d e f g h
+White to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4
+
+Your move: Bd2
+
+  a b c d e f g h
+8 r . b q k . . r 8
+7 p p p p . p p p 7
+6 . . n . p . n . 6
+5 . . . . P . . . 5
+4 . b P P . . . P 4
+3 . . N . . N . . 3
+2 P P . B . P P . 2
+1 R . . Q K B . R 1
+  a b c d e f g h
+Black to move | Castling: KQkq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2
+
+Black AI thinking for 3s...
+Best move: Rg8 (nodes: 1614364, depth: 8, eval: -69, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . n . p . n . 6
+5 . . . . P . . . 5
+4 . b P P . . . P 4
+3 . . N . . N . . 3
+2 P P . B . P P . 2
+1 R . . Q K B . R 1
+  a b c d e f g h
+White to move | Castling: KQq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8
+
+Your move: h5
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . n . p . n . 6
+5 . . . . P . . P 5
+4 . b P P . . . . 4
+3 . . N . . N . . 3
+2 P P . B . P P . 2
+1 R . . Q K B . R 1
+  a b c d e f g h
+Black to move | Castling: KQq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5
+
+Black AI thinking for 3s...
+Best move: Nge7 (nodes: 1995049, depth: 8, eval: -4, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p n p p p 7
+6 . . n . p . . . 6
+5 . . . . P . . P 5
+4 . b P P . . . . 4
+3 . . N . . N . . 3
+2 P P . B . P P . 2
+1 R . . Q K B . R 1
+  a b c d e f g h
+White to move | Castling: KQq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7
+
+Your move: Bd3
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p n p p p 7
+6 . . n . p . . . 6
+5 . . . . P . . P 5
+4 . b P P . . . . 4
+3 . . N B . N . . 3
+2 P P . B . P P . 2
+1 R . . Q K . . R 1
+  a b c d e f g h
+Black to move | Castling: KQq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3
+
+Black AI thinking for 3s...
+Best move: Nf5 (nodes: 1817498, depth: 8, eval: -14, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . n . p . . . 6
+5 . . . . P n . P 5
+4 . b P P . . . . 4
+3 . . N B . N . . 3
+2 P P . B . P P . 2
+1 R . . Q K . . R 1
+  a b c d e f g h
+White to move | Castling: KQq
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5
+
+Your move: 0-0
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . n . p . . . 6
+5 . . . . P n . P 5
+4 . b P P . . . . 4
+3 . . N B . N . . 3
+2 P P . B . P P . 2
+1 R . . Q . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O 
+
+Black AI thinking for 3s...
+Best move: Ncxd4 (nodes: 2029711, depth: 8, eval: -92, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . . . p . . . 6
+5 . . . . P n . P 5
+4 . b P n . . . . 4
+3 . . N B . N . . 3
+2 P P . B . P P . 2
+1 R . . Q . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4
+
+Your move: Nxd4
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . . . p . . . 6
+5 . . . . P n . P 5
+4 . b P N . . . . 4
+3 . . N B . . . . 3
+2 P P . B . P P . 2
+1 R . . Q . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4
+
+Black AI thinking for 3s...
+Best move: Nxd4 (nodes: 2084195, depth: 7, eval: -93, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . . . p . . . 6
+5 . . . . P . . P 5
+4 . b P n . . . . 4
+3 . . N B . . . . 3
+2 P P . B . P P . 2
+1 R . . Q . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4
+
+Your move: Qg4
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . . . p . . . 6
+5 . . . . P . . P 5
+4 . b P n . . Q . 4
+3 . . N B . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4
+
+Black AI thinking for 3s...
+Best move: Nc6 (nodes: 2030300, depth: 8, eval: -77, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p p 7
+6 . . n . p . . . 6
+5 . . . . P . . P 5
+4 . b P . . . Q . 4
+3 . . N B . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6
+
+Your move: Bxh7
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p B 7
+6 . . n . p . . . 6
+5 . . . . P . . P 5
+4 . b P . . . Q . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7
+
+Black AI thinking for 3s...
+Best move: Nxe5 (nodes: 2280876, depth: 7, eval: -127, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p B 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . b P . . . Q . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5
+
+Your move: Qg3
+
+  a b c d e f g h
+8 r . b q k . r . 8
+7 p p p p . p p B 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . b P . . . . . 4
+3 . . N . . . Q . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3
+
+Black AI thinking for 3s...
+Best move: Rh8 (nodes: 1840211, depth: 8, eval: +31, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . . r 8
+7 p p p p . p p B 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . b P . . . . . 4
+3 . . N . . . Q . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8
+
+Your move: Qxg2
+Invalid move. Try again.
+Your move: Qxg7
+
+  a b c d e f g h
+8 r . b q k . . r 8
+7 p p p p . p Q B 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . b P . . . . . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7
+
+Black AI thinking for 3s...
+Best move: Rxh7 (nodes: 2050783, depth: 8, eval: +80, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k . . . 8
+7 p p p p . p Q r 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . b P . . . . . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7
+
+Your move: Qg8
+
+  a b c d e f g h
+8 r . b q k . Q . 8
+7 p p p p . p . r 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . b P . . . . . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+
+
+Black AI thinking for 3s...
+Best move: Bf8 (nodes: 2214225, depth: 9, eval: +39, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k b Q . 8
+7 p p p p . p . r 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . . P . . . . . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8
+
+Your move: Qxh7
+
+  a b c d e f g h
+8 r . b q k b . . 8
+7 p p p p . p . Q 7
+6 . . . . p . . . 6
+5 . . . . n . . P 5
+4 . . P . . . . . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7
+
+Black AI thinking for 3s...
+Best move: Nxc4 (nodes: 1782445, depth: 8, eval: +32, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k b . . 8
+7 p p p p . p . Q 7
+6 . . . . p . . . 6
+5 . . . . . . . P 5
+4 . . n . . . . . 4
+3 . . N . . . . . 3
+2 P P . B . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4
+
+Your move: Bf4
+
+  a b c d e f g h
+8 r . b q k b . . 8
+7 p p p p . p . Q 7
+6 . . . . p . . . 6
+5 . . . . . . . P 5
+4 . . n . . B . . 4
+3 . . N . . . . . 3
+2 P P . . . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4
+
+Black AI thinking for 3s...
+Best move: Qh4 (nodes: 2010856, depth: 9, eval: +43, time: 3s)
+
+
+  a b c d e f g h
+8 r . b . k b . . 8
+7 p p p p . p . Q 7
+6 . . . . p . . . 6
+5 . . . . . . . P 5
+4 . . n . . B . q 4
+3 . . N . . . . . 3
+2 P P . . . P P . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4
+
+Your move: g3
+
+  a b c d e f g h
+8 r . b . k b . . 8
+7 p p p p . p . Q 7
+6 . . . . p . . . 6
+5 . . . . . . . P 5
+4 . . n . . B . q 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3
+
+Black AI thinking for 3s...
+Best move: Qd8 (nodes: 2033818, depth: 9, eval: +92, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k b . . 8
+7 p p p p . p . Q 7
+6 . . . . p . . . 6
+5 . . . . . . . P 5
+4 . . n . . B . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8
+
+Your move: Qg8
+
+  a b c d e f g h
+8 r . b q k b Q . 8
+7 p p p p . p . . 7
+6 . . . . p . . . 6
+5 . . . . . . . P 5
+4 . . n . . B . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8
+
+Black AI thinking for 3s...
+Best move: d6 (nodes: 2130142, depth: 9, eval: +37, time: 3s)
+
+
+  a b c d e f g h
+8 r . b q k b Q . 8
+7 p p p . . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . . P 5
+4 . . n . . B . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6
+
+Your move: h6
+
+  a b c d e f g h
+8 r . b q k b Q . 8
+7 p p p . . p . . 7
+6 . . . p p . . P 6
+5 . . . . . . . . 5
+4 . . n . . B . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6
+
+Black AI thinking for 3s...
+Best move: Qf6 (nodes: 1784358, depth: 8, eval: +549, time: 3s)
+
+
+  a b c d e f g h
+8 r . b . k b Q . 8
+7 p p p . . p . . 7
+6 . . . p p q . P 6
+5 . . . . . . . . 5
+4 . . n . . B . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6
+
+Your move: Bg5
+
+  a b c d e f g h
+8 r . b . k b Q . 8
+7 p p p . . p . . 7
+6 . . . p p q . P 6
+5 . . . . . . B . 5
+4 . . n . . . . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5
+
+Black AI thinking for 3s...
+Best move: Qe5 (nodes: 2113390, depth: 8, eval: +544, time: 3s)
+
+
+  a b c d e f g h
+8 r . b . k b Q . 8
+7 p p p . . p . . 7
+6 . . . p p . . P 6
+5 . . . . q . B . 5
+4 . . n . . . . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5
+
+Your move: h7
+
+  a b c d e f g h
+8 r . b . k b Q . 8
+7 p p p . . p . P 7
+6 . . . p p . . . 6
+5 . . . . q . B . 5
+4 . . n . . . . . 4
+3 . . N . . . P . 3
+2 P P . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7
+
+Black AI thinking for 3s...
+Best move: Nxb2 (nodes: 2014948, depth: 8, eval: +687, time: 3s)
+
+
+  a b c d e f g h
+8 r . b . k b Q . 8
+7 p p p . . p . P 7
+6 . . . p p . . . 6
+5 . . . . q . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P n . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2
+
+Your move: h8
+Invalid move. Try again.
+Your move: h8=Q
+
+  a b c d e f g h
+8 r . b . k b Q Q 8
+7 p p p . . p . . 7
+6 . . . p p . . . 6
+5 . . . . q . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P n . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q
+
+Black AI thinking for 3s...
+Best move: Qxh8 (nodes: 2361458, depth: 9, eval: +782, time: 3s)
+
+
+  a b c d e f g h
+8 r . b . k b Q q 8
+7 p p p . . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P n . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8
+
+Your move: Qxa8
+Invalid move. Try again.
+Your move: Qxh8
+
+  a b c d e f g h
+8 r . b . k b . Q 8
+7 p p p . . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P n . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8
+
+Black AI thinking for 3s...
+Best move: Bd7 (nodes: 2294771, depth: 9, eval: +818, time: 3s)
+
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p p p b . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P n . . . P . . 2
+1 R . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7
+
+Your move: Rab1
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p p p b . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P n . . . P . . 2
+1 . R . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1
+
+Black AI thinking for 3s...
+Best move: Nc4 (nodes: 1825272, depth: 8, eval: +775, time: 3s)
+
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p p p b . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . B . 5
+4 . . n . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . R . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4
+
+Your move: Rxa2
+Invalid move. Try again.
+Your move: Rxb7
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p R p b . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . B . 5
+4 . . n . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7
+
+Black AI thinking for 3s...
+Best move: Ne5 (nodes: 1953819, depth: 9, eval: +888, time: 3s)
+
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p R p b . p . . 7
+6 . . . p p . . . 6
+5 . . . . n . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5
+
+Your move: Rxc7
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p . R b . p . . 7
+6 . . . p p . . . 6
+5 . . . . n . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Rxc7
+
+Black AI thinking for 3s...
+Best move: Nf3+ (nodes: 2208166, depth: 9, eval: +755, time: 3s)
+
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p . R b . p . . 7
+6 . . . p p . . . 6
+5 . . . . . . B . 5
+4 . . . . . . . . 4
+3 . . N . . n P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Rxc7 Nf3+
+
+Your move: undo
+Move(s) undone.
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p R p b . p . . 7
+6 . . . p p . . . 6
+5 . . . . n . B . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5
+
+Your move: Nh6
+Invalid move. Try again.
+Your move: Bh6
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p R p b . p . . 7
+6 . . . p p . . B 6
+5 . . . . n . . . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6
+
+Black AI thinking for 3s...
+Best move: Ng6 (nodes: 2348741, depth: 10, eval: +822, time: 3s)
+
+
+  a b c d e f g h
+8 r . . . k b . Q 8
+7 p R p b . p . . 7
+6 . . . p p . n B 6
+5 . . . . . . . . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6
+
+Your move: Qg8
+
+  a b c d e f g h
+8 r . . . k b Q . 8
+7 p R p b . p . . 7
+6 . . . p p . n B 6
+5 . . . . . . . . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: q
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8
+
+Black AI thinking for 3s...
+Best move: Rc8 (nodes: 2328646, depth: 9, eval: +949, time: 3s)
+
+
+  a b c d e f g h
+8 . . r . k b Q . 8
+7 p R p b . p . . 7
+6 . . . p p . n B 6
+5 . . . . . . . . 5
+4 . . . . . . . . 4
+3 . . N . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8
+
+Your move: Ne4
+
+  a b c d e f g h
+8 . . r . k b Q . 8
+7 p R p b . p . . 7
+6 . . . p p . n B 6
+5 . . . . . . . . 5
+4 . . . . N . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4
+
+Black AI thinking for 3s...
+Best move: e5 (nodes: 2116709, depth: 8, eval: +1101, time: 3s)
+
+
+  a b c d e f g h
+8 . . r . k b Q . 8
+7 p R p b . p . . 7
+6 . . . p . . n B 6
+5 . . . . p . . . 5
+4 . . . . N . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5
+
+Your move: Ng5
+
+  a b c d e f g h
+8 . . r . k b Q . 8
+7 p R p b . p . . 7
+6 . . . p . . n B 6
+5 . . . . p . N . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5
+
+Black AI thinking for 3s...
+Best move: Be6 (nodes: 2283393, depth: 9, eval: +1356, time: 3s)
+
+
+  a b c d e f g h
+8 . . r . k b Q . 8
+7 p R p . . p . . 7
+6 . . . p b . n B 6
+5 . . . . p . N . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6
+
+Your move: Nxe6
+
+  a b c d e f g h
+8 . . r . k b Q . 8
+7 p R p . . p . . 7
+6 . . . p N . n B 6
+5 . . . . p . . . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6
+
+Black AI thinking for 3s...
+Best move: fxe6 (nodes: 2391546, depth: 9, eval: +1501, time: 3s)
+
+
+  a b c d e f g h
+8 . . r . k b Q . 8
+7 p R p . . . . . 7
+6 . . . p p . n B 6
+5 . . . . p . . . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6
+
+Your move: Qxe6
+
+  a b c d e f g h
+8 . . r . k b . . 8
+7 p R p . . . . . 7
+6 . . . p Q . n B 6
+5 . . . . p . . . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+
+
+Black AI thinking for 3s...
+Best move: Kd8 (nodes: 2383196, depth: 10, eval: +1428, time: 3s)
+
+
+  a b c d e f g h
+8 . . r k . b . . 8
+7 p R p . . . . . 7
+6 . . . p Q . n B 6
+5 . . . . p . . . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8
+
+Your move: Qxg7
+Invalid move. Try again.
+Your move: Qxg6
+
+  a b c d e f g h
+8 . . r k . b . . 8
+7 p R p . . . . . 7
+6 . . . p . . Q B 6
+5 . . . . p . . . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6
+
+Black AI thinking for 3s...
+Best move: Bxh6 (nodes: 2740082, depth: 10, eval: +1555, time: 3s)
+
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . . . 7
+6 . . . p . . Q b 6
+5 . . . . p . . . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6
+
+Your move: Qxh6
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . . . 7
+6 . . . p . . . Q 6
+5 . . . . p . . . 5
+4 . . . . . . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6
+
+Black AI thinking for 3s...
+Best move: e4 (nodes: 2837104, depth: 9, eval: +0, time: 3s)
+
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . . . 7
+6 . . . p . . . Q 6
+5 . . . . . . . . 5
+4 . . . . p . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4
+
+Your move: Qg7
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . Q . 7
+6 . . . p . . . . 6
+5 . . . . . . . . 5
+4 . . . . p . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7
+
+Black AI thinking for 3s...
+Best move: Ke8 (nodes: 2598013, depth: 13, eval: +1818, time: 3s)
+
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p . . . Q . 7
+6 . . . p . . . . 6
+5 . . . . . . . . 5
+4 . . . . p . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . . R K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8
+
+Your move: Re4
+Invalid move. Try again.
+Your move: Re1
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p . . . Q . 7
+6 . . . p . . . . 6
+5 . . . . . . . . 5
+4 . . . . p . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . R . K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1
+
+Black AI thinking for 3s...
+Best move: d5 (nodes: 2758574, depth: 22, eval: +2163, time: 3s)
+
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p . . . Q . 7
+6 . . . . . . . . 6
+5 . . . p . . . . 5
+4 . . . . p . . . 4
+3 . . . . . . P . 3
+2 P . . . . P . . 2
+1 . . . . R . K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5
+
+Your move: f3
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p . . . Q . 7
+6 . . . . . . . . 6
+5 . . . p . . . . 5
+4 . . . . p . . . 4
+3 . . . . . P P . 3
+2 P . . . . . . . 2
+1 . . . . R . K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3
+
+Black AI thinking for 3s...
+Best move: Kd8 (nodes: 3248142, depth: 25, eval: +99999, time: 3s)
+
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . Q . 7
+6 . . . . . . . . 6
+5 . . . p . . . . 5
+4 . . . . p . . . 4
+3 . . . . . P P . 3
+2 P . . . . . . . 2
+1 . . . . R . K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8
+
+Your move: Rd1
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . Q . 7
+6 . . . . . . . . 6
+5 . . . p . . . . 5
+4 . . . . p . . . 4
+3 . . . . . P P . 3
+2 P . . . . . . . 2
+1 . . . R . . K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8 40. Rd1
+
+Black AI thinking for 3s...
+Best move: e3 (nodes: 2938409, depth: 25, eval: +2189, time: 3s)
+
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . Q . 7
+6 . . . . . . . . 6
+5 . . . p . . . . 5
+4 . . . . . . . . 4
+3 . . . . p P P . 3
+2 P . . . . . . . 2
+1 . . . R . . K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8 40. Rd1 e3
+
+Your move: Rxd1
+Invalid move. Try again.
+Your move: Rxd5
+
+  a b c d e f g h
+8 . . r k . . . . 8
+7 p R p . . . Q . 7
+6 . . . . . . . . 6
+5 . . . R . . . . 5
+4 . . . . . . . . 4
+3 . . . . p P P . 3
+2 P . . . . . . . 2
+1 . . . . . . K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8 40. Rd1 e3 41. Rxd5+
+
+Black AI thinking for 3s...
+Best move: Ke8 (nodes: 0, depth: 0, eval: +2189, time: 0s)
+
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p . . . Q . 7
+6 . . . . . . . . 6
+5 . . . R . . . . 5
+4 . . . . . . . . 4
+3 . . . . p P P . 3
+2 P . . . . . . . 2
+1 . . . . . . K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8 40. Rd1 e3 41. Rxd5+ Ke8
+
+Your move: Rd7
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p R . . Q . 7
+6 . . . . . . . . 6
+5 . . . . . . . . 5
+4 . . . . . . . . 4
+3 . . . . p P P . 3
+2 P . . . . . . . 2
+1 . . . . . . K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8 40. Rd1 e3 41. Rxd5+ Ke8 42. Rd7
+
+Black AI thinking for 3s...
+Best move: e2 (nodes: 1976, depth: 64, eval: +1697, time: 0s)
+
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p R . . Q . 7
+6 . . . . . . . . 6
+5 . . . . . . . . 5
+4 . . . . . . . . 4
+3 . . . . . P P . 3
+2 P . . . p . . . 2
+1 . . . . . . K . 1
+  a b c d e f g h
+White to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8 40. Rd1 e3 41. Rxd5+ Ke8 42. Rd7 e2
+
+Your move: Qe7
+
+  a b c d e f g h
+8 . . r . k . . . 8
+7 p R p R Q . . . 7
+6 . . . . . . . . 6
+5 . . . . . . . . 5
+4 . . . . . . . . 4
+3 . . . . . P P . 3
+2 P . . . p . . . 2
+1 . . . . . . K . 1
+  a b c d e f g h
+Black to move | Castling: -
+
+Moves: 1. e4 Nf6 2. e5 Nd5 3. c4 Nf4 4. d4 Ng6 5. h4 e6 6. Nf3 Nc6 7. Nc3 Bb4 8. Bd2 Rg8 9. h5 Nge7 10. Bd3 Nf5 11. O-O Ncxd4 12. Nxd4 Nxd4 13. Qg4 Nc6 14. Bxh7 Nxe5 15. Qg3 Rh8 16. Qxg7 Rxh7 17. Qg8+ Bf8 18. Qxh7 Nxc4 19. Bf4 Qh4 20. g3 Qd8 21. Qg8 d6 22. h6 Qf6 23. Bg5 Qe5 24. h7 Nxb2 25. h8=Q Qxh8 26. Qxh8 Bd7 27. Rab1 Nc4 28. Rxb7 Ne5 29. Bh6 Ng6 30. Qg8 Rc8 31. Ne4 e5 32. Ng5 Be6 33. Nxe6 fxe6 34. Qxe6+ Kd8 35. Qxg6 Bxh6 36. Qxh6 e4 37. Qg7 Ke8 38. Re1 d5 39. f3 Kd8 40. Rd1 e3 41. Rxd5+ Ke8 42. Rd7 e2 43. Qe7#
+
+
+Checkmate! 1-0
+Save PGN? (filename or 'n'):
